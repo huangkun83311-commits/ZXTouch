@@ -109,7 +109,7 @@ void processTask(UInt8 *buff, CFWriteStreamRef writeStreamRef)
             NSTask *task = [[NSTask alloc] init];
 
             // 设置执行的命令和参数
-            [task setLaunchPath:@"/usr/bin/sudo"];
+            [task setLaunchPath:@"/var/jb/usr/bin/sudo"];
             [task setArguments:@[[NSString stringWithFormat:@"sudo zxtouchb -e \"%s\"", eventData]]];
 
             // 设置输出管道，如果需要获取命令的输出

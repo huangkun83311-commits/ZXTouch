@@ -209,7 +209,7 @@ void startPopupListeningCallBack()
 
 Boolean initActivatorInstance()
 {
-    dlopen("/usr/lib/libactivator.dylib", RTLD_LAZY);
+    dlopen("/var/jb/usr/lib/libactivator.dylib", RTLD_LAZY);
     Class la = objc_getClass("LAActivator");
     if (la) { //libactivator is installed
         activatorInstance = [[ActivatorListener alloc] init];
@@ -233,7 +233,7 @@ Boolean initConfig()
     // read config file
     // check whether config file exist
     NSString *configFilePath = getCommonConfigFilePath();
-
+    NSLog(@"com.zjx.springboard: configFilePath: %@", configFilePath);
     if (![[NSFileManager defaultManager] fileExistsAtPath:configFilePath]) // if missing, then use the default value
     {
         //showAlertBox(@"Error", configFilePath, 999);
@@ -275,16 +275,7 @@ Boolean init()
     return true;
 }
 
-%ctor{
-
-}
-
-%hook SpringBoard
-#define CGRectSetPos( r, x, y ) CGRectMake( x, y, r.size.width, r.size.height )
-
-- (void)applicationDidFinishLaunching:(id)arg1
-{
-    %orig;
+void init_zxtouch(void) {
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         Boolean isExpired = false;
@@ -364,7 +355,26 @@ Boolean init()
         //system("sudo zxtouchb -e \"chown -R mobile:mobile /var/mobile/Documents/com.zjx.zxtouchsp\"");
         //system("sudo zxtouchb -e \"chown -R mobile:mobile /var/mobile/Library/ZXTouch\"");
 
+        NSLog(@"com.zjx.springboard: try to start socket server");
         socketServer();
     });
+}
+
+%ctor{
+    NSLog(@"com.zjx.springboard: constructor");
+    NSString *bundleID = [NSBundle mainBundle].bundleIdentifier;
+    if (![bundleID isEqualToString:@"com.apple.springboard"]) {
+        init_zxtouch();
+    }
+}
+
+%hook SpringBoard
+#define CGRectSetPos( r, x, y ) CGRectMake( x, y, r.size.width, r.size.height )
+
+- (void)applicationDidFinishLaunching:(id)arg1
+{
+    %orig;
+
+    init_zxtouch();
 }
 %end

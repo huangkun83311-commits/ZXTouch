@@ -1,5 +1,46 @@
 # IOS13-SimulateTouch V0.0.8
 
+自带的`python3.7`找不到`libpython`，修改`LC_LOAD_DYLIB`路径后，找不到`bind_stub_helper`
+
+暂时解决方案：
+
+安装后`ZXTouch`后，再安装`python3.x`
+
+拷贝`ZXTouch`带的`libpython3.7`到新装的`libpython`中
+
+```stylus
+# cd /var/jb
+# cp -r ./usr/lib/python3.7/* ./usr/lib/python3.9
+```
+
+
+
+`zxtouch.app`不能启动：
+
+权限不足，需要添加以下权限（已修复）
+
+```stylus
+<key>platform-application</key>
+<true/>
+<key>com.apple.private.security.container-required</key>
+<false/>
+<key>com.apple.private.skip-library-validation</key>
+<true/>
+```
+
+> 编译`zxtouch.app`后，替换到`/layout/Applications/`中
+>
+
+
+
+现状：
+
+可以录制脚本，并回放录制的脚本
+
+按原来的命令执行python类脚本不成功，简化命令后成功。
+
+
+
 ## Why building for V0.0.8 ?
 
 There all several commits after v0.0.7 release, which haven't been compiled for years.
@@ -280,7 +321,7 @@ device.disconnect()
 ```
 
 ## Show Alert Box
- 
+
 ```python
 def show_alert_box(title, content, duration):
     """Show alert box on device
@@ -312,7 +353,7 @@ device.disconnect()
 
 
 ## Run Shell Command As Root
- 
+
 ```python
 def run_shell_command(command):
     """Run shell command on device as root
@@ -465,7 +506,7 @@ device.disconnect()
 
 I don't know the why, but if you call `time.sleep` in python, the sleep time will not be accurate. However you can use accurate_sleep method in zxtouch to sleep for an accurate time.
 
- 
+
 ```python
 def accurate_usleep(microseconds):
     """Sleep for an accurate time

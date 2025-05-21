@@ -365,6 +365,20 @@ static void IOHIDEventCallbackForTouchIndicator(void* target, void* refcon, IOHI
 - (void) show {
     dispatch_async(dispatch_get_main_queue(), ^{
         _window.hidden = NO;
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 13.0) {
+            NSSet *scenes = [[UIApplication sharedApplication] performSelector:@selector(connectedScenes)];
+            for (id windowScene in scenes){
+                
+                if ([windowScene activationState] == 0) {
+                    [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    continue;
+                }
+                if ([windowScene activationState] == 1) {
+                    [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    NSLog(@"### com.zjx.springboard: touch indicator windowScene %@", windowScene);
+                }
+            }
+        }
     });
 }
 

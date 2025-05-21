@@ -24,6 +24,7 @@
 	+ (id)sharedInstance;
 	+ (id)activeInstance;
 	- (void)insertText:(id)arg1;
+    - (void)insertText:(id)arg1 withAlternativePredictions:(id)arg2 ;
 	- (void)hideKeyboard;
     - (void)showKeyboard;
 	- (void)clearDelegate;
@@ -84,7 +85,14 @@
 		if (taskId == INSERT_TEXT)
 		{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self insertText:data[@"task_content"]];
+                if ([self respondsToSelector:@selector(insertText:)]) {
+                    [self insertText:data[@"task_content"]];
+                } else if ([self respondsToSelector:@selector(insertText:withAlternativePredictions:)]) {
+                    [self insertText:data[@"task_content"] withAlternativePredictions:nil];
+                } else {
+                    NSLog(@"com.zjx.appdelegate: [UIKeyboardImpl insertText:] not found");
+                }
+                
                 NSLog(@"com.zjx.appdelegate: insert text: %@", data[@"task_content"]);
             });
 		}
@@ -124,7 +132,13 @@
         else if (taskId == PASTE_FROM_CLIPBOARD)
         {
             UIPasteboard *pb = [UIPasteboard generalPasteboard];
-            [self insertText:[pb string]];
+            if ([self respondsToSelector:@selector(insertText:)]) {
+                [self insertText:[pb string]];
+            } else if ([self respondsToSelector:@selector(insertText:withAlternativePredictions:)]) {
+                [self insertText:[pb string] withAlternativePredictions:nil];
+            } else {
+                NSLog(@"com.zjx.appdelegate: [UIKeyboardImpl insertText:] not found");
+            }
         }
 	}
 

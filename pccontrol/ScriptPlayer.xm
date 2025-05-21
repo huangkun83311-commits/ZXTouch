@@ -146,6 +146,21 @@ static BOOL isPlaying = false;
         circleView.layer.cornerRadius = 10;  // half the width/height
         circleView.backgroundColor = [UIColor greenColor];
         [_playIndicator addSubview:circleView];
+
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 13.0) {
+            NSSet *scenes = [[UIApplication sharedApplication] performSelector:@selector(connectedScenes)];
+            for (id windowScene in scenes){
+                
+                if ([windowScene activationState] == 0) {
+                    [_playIndicator performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    continue;
+                }
+                if ([windowScene activationState] == 1) {
+                    [_playIndicator performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    NSLog(@"### com.zjx.springboard: _playIndicator windowScene %@", windowScene);
+                }
+            }
+        }
     });
 
     NSString *entryFilePath = [scriptBundlePath stringByAppendingPathComponent:entryFileName];
@@ -248,9 +263,9 @@ static BOOL isPlaying = false;
     }
     
     // check python exists
-    if (![[NSFileManager defaultManager] fileExistsAtPath:@"/bin/python3"])
+    if (![[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/bin/python3"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/usr/bin/python3"])
     {
-        showAlertBox(@"Error", @"Cannot play this script. /bin/python3 not found. Please install Python3.7 on your device.", 999);
+        showAlertBox(@"Error", @"Cannot play this script. python3 not found. Please install Python3 on your device.", 999);
         isPlaying = false;
         return;
     }
@@ -261,12 +276,14 @@ static BOOL isPlaying = false;
         isPlaying = false;
         return;
     }
-    NSString *commandToRun = [NSString stringWithFormat:@"sudo zxtouchb -e \"python3 -u \\\"%@\\\" 2>&1 | /var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/add_datetime.sh\" >> /var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/output", filePath];
-    NSLog(@"com.zjx.springboard: command to run for running py file %@", commandToRun);
+    //NSString *commandToRun = [NSString stringWithFormat:@"sudo zxtouchb -e \"python3 -u \\\"%@\\\" 2>&1 | /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/add_datetime.sh\" >> /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/output", filePath];
+    NSString *commandToRun = [NSString stringWithFormat:@"zxtouchb -e \"python3 -u \\\"%@\\\" 2>&1 | /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/add_datetime.sh\" >> /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/output", filePath];
+    NSLog(@"com.zjx.springboard: command to run for running py file: %@", commandToRun);
 
     // here I made it run in background because of a weird thing: ios objc cannot call second system() if the first system() does not return
     //scriptPlayForceStop = true;
-    system2([commandToRun UTF8String], NULL, NULL);
+    //system2([commandToRun UTF8String], NULL, NULL);
+    system3([commandToRun UTF8String]);
     // add force stop
     [self playHasStopped];
 }
@@ -353,7 +370,8 @@ static BOOL isPlaying = false;
     else if (currentScriptType == 2)
     {
         // kill all python3 process
-        system2("sudo zxtouchb -e \"killall -9 python3\"", NULL, NULL);
+        //system2("sudo zxtouchb -e \"killall -9 python3\"", NULL, NULL);
+        system3("sudo zxtouchb -e \"killall -9 python3\"");
         [self clear];
     }
     else

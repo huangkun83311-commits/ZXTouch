@@ -1,8 +1,8 @@
 @interface NSTask : NSObject
-@property (copy) NSArray *arguments;
-@property (copy) NSString *currentDirectoryPath;
-@property (copy) NSDictionary *environment;
-@property (copy) NSString *launchPath;
+@property (nullable, copy) NSArray<NSString *> *arguments;
+@property (nullable, copy) NSString *currentDirectoryPath;
+@property (nullable, copy) NSDictionary *environment;
+@property (nullable, copy) NSString *launchPath;
 @property (readonly) int processIdentifier;
 @property long long qualityOfService;
 @property (getter=isRunning, readonly) bool running;
@@ -15,7 +15,7 @@
 + (id)currentTaskDictionary;
 + (id)launchedTaskWithDictionary:(id)arg1;
 + (id)launchedTaskWithLaunchPath:(id)arg1 arguments:(id)arg2;
-- (id)init;
+- (nullable id)init;
 - (void)interrupt;
 - (bool)isRunning;
 - (void)launch;

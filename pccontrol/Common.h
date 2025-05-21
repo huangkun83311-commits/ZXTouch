@@ -32,6 +32,7 @@ void swapCGFloat(CGFloat *a, CGFloat *b);
 NSString *getConfigFilePath();
 NSString *getCommonConfigFilePath();
 pid_t system2(const char * command, int * infp, int * outfp);
+int system3(const char * command);
 int roundUp(int numToRound, int multiple);
 Boolean isIpad();
 NSString* getDeviceName();

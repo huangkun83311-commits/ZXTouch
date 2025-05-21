@@ -154,6 +154,21 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
 
         _window.hidden = NO;
 
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 13.0) {
+            NSSet *scenes = [[UIApplication sharedApplication] performSelector:@selector(connectedScenes)];
+            for (id windowScene in scenes){
+                
+                if ([windowScene activationState] == 0) {
+                    [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    continue;
+                }
+                if ([windowScene activationState] == 1) {
+                    [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    NSLog(@"### com.zjx.springboard: toast windowScene %@", windowScene);
+                }
+            }
+        }
+
     });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [NSThread sleepForTimeInterval:duration];

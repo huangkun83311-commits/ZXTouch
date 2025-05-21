@@ -3,7 +3,10 @@
 include $(THEOS)/makefiles/common.mk
 
 TOOL_NAME = zxtouchb
-zxtouchb_ARCH = arm64e arm64
+zxtouchb_ARCHS = arm64e arm64
+TARGET := iphone:clang:16.5:14.0
+THEOS_PACKAGE_SCHEME=rootless
+THEOS_PACKAGE_INSTALL_PREFIX=/var/jb
 
 zxtouchb_FILES = main.mm
 zxtouchb_FRAMEWORKS = CoreFoundation UIKit CoreGraphics

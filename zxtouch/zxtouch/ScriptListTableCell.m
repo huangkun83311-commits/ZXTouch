@@ -21,7 +21,10 @@
 
 - (IBAction)playButtonClick:(id)sender {
     Socket *springBoardSocket = [[Socket alloc] init];
-    [springBoardSocket connect:@"127.0.0.1" byPort:6000];
+    int ret = [springBoardSocket connect:@"127.0.0.1" byPort:6000];
+    if (ret != 0) {
+        return;
+    }
     
     [springBoardSocket send:[NSString stringWithFormat:@"19%@", filePath]];
     NSString* result = [springBoardSocket recv:1024];

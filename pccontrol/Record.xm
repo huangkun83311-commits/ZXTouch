@@ -114,6 +114,21 @@ void startRecording(CFWriteStreamRef requestClient, NSError **error)
             circleView.layer.cornerRadius = 10;  // half the width/height
             circleView.backgroundColor = [UIColor redColor];
             [_recordIndicator addSubview:circleView];
+
+            if ([UIDevice currentDevice].systemVersion.floatValue >= 13.0) {
+            NSSet *scenes = [[UIApplication sharedApplication] performSelector:@selector(connectedScenes)];
+            for (id windowScene in scenes){
+                
+                if ([windowScene activationState] == 0) {
+                    [_recordIndicator performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    continue;
+                }
+                if ([windowScene activationState] == 1) {
+                    [_recordIndicator performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    NSLog(@"### com.zjx.springboard: record indicator windowScene %@", windowScene);
+                }
+            }
+        }
         });
 
         scriptRecordingFileHandle = [NSFileHandle fileHandleForWritingAtPath:rawFilePath];

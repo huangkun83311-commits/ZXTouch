@@ -44,7 +44,7 @@ static int windowHeight = 250;
             // Add header
             NSString *headerText = @"ZXTouch Panel";
 
-            UIFont * font = [UIFont systemFontOfSize:30];
+            UIFont * font = [UIFont systemFontOfSize:25];
             CGSize headerSize = [headerText sizeWithFont:font];
 
             UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(windowWidth/2 - headerSize.width/2, 0, headerSize.width, headerSize.height)];
@@ -86,7 +86,7 @@ static int windowHeight = 250;
             forControlEvents:UIControlEventTouchUpInside];
 
             recordButton.backgroundColor = [UIColor clearColor];
-            [recordButton setImage:[UIImage imageWithContentsOfFile:@"/Library/Application Support/zxtouch/start-recording.png"] forState:UIControlStateNormal];
+            [recordButton setImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/Application Support/zxtouch/start-recording.png"] forState:UIControlStateNormal];
 
             recordButton.frame = CGRectMake(30, headerSize.height + 10, 50, 50);
             [_window addSubview:recordButton];
@@ -98,7 +98,7 @@ static int windowHeight = 250;
             forControlEvents:UIControlEventTouchUpInside];
 
             stopButton.backgroundColor = [UIColor clearColor];
-            [stopButton setImage:[UIImage imageWithContentsOfFile:@"/Library/Application Support/zxtouch/stop-playing.png"] forState:UIControlStateNormal];
+            [stopButton setImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/Application Support/zxtouch/stop-playing.png"] forState:UIControlStateNormal];
 
             stopButton.frame = CGRectMake(100, headerSize.height + 10, 50, 50);
             [_window addSubview:stopButton];
@@ -138,6 +138,20 @@ static int windowHeight = 250;
 
 - (void) show {
     dispatch_async(dispatch_get_main_queue(), ^{
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 13.0) {
+            NSSet *scenes = [[UIApplication sharedApplication] performSelector:@selector(connectedScenes)];
+            for (id windowScene in scenes){
+                
+                if ([windowScene activationState] == 0) {
+                    [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    continue;
+                }
+                if ([windowScene activationState] == 1) {
+                    [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
+                    NSLog(@"### com.zjx.springboard: popup windowScene %@", windowScene);
+                }
+            }
+        }
         _window.hidden = NO;
     });
     isShown = YES;
