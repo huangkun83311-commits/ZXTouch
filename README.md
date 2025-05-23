@@ -1,17 +1,10 @@
 # IOS13-SimulateTouch V0.0.8
 
-自带的`python3.7`找不到`libpython`，修改`LC_LOAD_DYLIB`路径后，找不到`bind_stub_helper`
+原来的`python3.7`找不到`libpython`，修改`LC_LOAD_DYLIB`路径后，找不到`bind_stub_helper`
 
-暂时解决方案：
+解决方案：
 
-安装后`ZXTouch`后，再安装`python3.x`
-
-拷贝`ZXTouch`带的`libpython3.7`到新装的`libpython`中
-
-```stylus
-# cd /var/jb
-# cp -r ./usr/lib/python3.7/* ./usr/lib/python3.9
-```
+移除自带的python，只保留zxtouch，位于`layout/usr/lib/python3/dist-packages/`
 
 
 
@@ -28,7 +21,7 @@
 <true/>
 ```
 
-> 编译`zxtouch.app`后，替换到`/layout/Applications/`中
+> 编译`zxtouch.app`后，重签名，并替换`/layout/Applications/zxtouch.app`
 >
 
 
