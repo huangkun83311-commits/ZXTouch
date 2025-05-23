@@ -5,6 +5,7 @@
 #include "AlertBox.h"
 #include "Toast.h"
 #import <UIKit/UIKit.h>
+#import "jbroot.h"
 
 extern CGFloat device_screen_width;
 extern CGFloat device_screen_height;
@@ -86,7 +87,7 @@ static int windowHeight = 250;
             forControlEvents:UIControlEventTouchUpInside];
 
             recordButton.backgroundColor = [UIColor clearColor];
-            [recordButton setImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/Application Support/zxtouch/start-recording.png"] forState:UIControlStateNormal];
+            [recordButton setImage:[UIImage imageWithContentsOfFile:JBROOT_PATH_OC("/Library/Application Support/zxtouch/start-recording.png")] forState:UIControlStateNormal];
 
             recordButton.frame = CGRectMake(30, headerSize.height + 10, 50, 50);
             [_window addSubview:recordButton];
@@ -98,7 +99,7 @@ static int windowHeight = 250;
             forControlEvents:UIControlEventTouchUpInside];
 
             stopButton.backgroundColor = [UIColor clearColor];
-            [stopButton setImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/Application Support/zxtouch/stop-playing.png"] forState:UIControlStateNormal];
+            [stopButton setImage:[UIImage imageWithContentsOfFile:JBROOT_PATH_OC("/Library/Application Support/zxtouch/stop-playing.png")] forState:UIControlStateNormal];
 
             stopButton.frame = CGRectMake(100, headerSize.height + 10, 50, 50);
             [_window addSubview:stopButton];

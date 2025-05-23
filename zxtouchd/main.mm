@@ -6,6 +6,7 @@
 #import <unistd.h>
 #import <string.h>
 #import "NSTask.h"
+#import "jbroot.h"
 
 #define SPRINGBOARD_PORT 6000
 
@@ -125,7 +126,7 @@ int executeCommand(NSString *command) {
         NSTask *task = [[NSTask alloc] init];
         NSString *cmd = comps[1];
         // 设置执行的命令和参数
-        [task setLaunchPath:@"/var/jb/usr/bin/python3"];
+        [task setLaunchPath:JBROOT_PATH_OC("/usr/bin/python3")];
         [task setArguments:@[cmd]];
         
         NSLog(@"executeCommand %@", task);

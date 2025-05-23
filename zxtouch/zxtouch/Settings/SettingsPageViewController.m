@@ -125,7 +125,7 @@
 }
 
 - (void)handleConfigActivatorEventsWithEntryCellInstance:(TableViewCellWithEntry*)cell {
-    dlopen("/var/jb/usr/lib/libactivator.dylib", RTLD_LAZY);
+    dlopen(JBROOT_PATH("/usr/lib/libactivator.dylib"), RTLD_LAZY);
     Class ac = objc_getClass("LAActivator");
     if (ac) {
         
@@ -153,7 +153,7 @@
 }
 
 - (void)handleActivatorWithEntryCellInstance:(TableViewCellWithEntry*)cell {
-    dlopen("/var/jb/usr/lib/libactivator.dylib", RTLD_LAZY);
+    dlopen(JBROOT_PATH("/usr/lib/libactivator.dylib"), RTLD_LAZY);
     Class la = objc_getClass("LAListenerSettingsViewController");
     if (la) {
         LAListenerSettingsViewController *vc = [[la alloc] init];

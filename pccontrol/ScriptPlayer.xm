@@ -263,7 +263,7 @@ static BOOL isPlaying = false;
     }
     
     // check python exists
-    if (![[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/bin/python3"] && ![[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/usr/bin/python3"])
+    if (![[NSFileManager defaultManager] fileExistsAtPath:JBROOT_PATH_OC("/bin/python3")] && ![[NSFileManager defaultManager] fileExistsAtPath:JBROOT_PATH_OC("/usr/bin/python3")])
     {
         showAlertBox(@"Error", @"Cannot play this script. python3 not found. Please install Python3 on your device.", 999);
         isPlaying = false;
@@ -276,7 +276,7 @@ static BOOL isPlaying = false;
         isPlaying = false;
         return;
     }
-    //NSString *commandToRun = [NSString stringWithFormat:@"sudo zxtouchb -e \"python3 -u \\\"%@\\\" 2>&1 | /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/add_datetime.sh\" >> /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/output", filePath];
+
     NSString *commandToRun = [NSString stringWithFormat:@"zxtouchb -e \"python3 -u \\\"%@\\\" 2>&1 | /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/add_datetime.sh\" >> /var/jb/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/output", filePath];
     NSLog(@"com.zjx.springboard: command to run for running py file: %@", commandToRun);
 

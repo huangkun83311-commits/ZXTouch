@@ -40,6 +40,7 @@
 #include "Play.h"
 #include "TouchIndicator/TouchIndicatorWindow.h"
 #include "Activator/ActivatorListener.h"
+#import "jbroot.h"
 
 
 #define DEBUG_MODE
@@ -209,7 +210,7 @@ void startPopupListeningCallBack()
 
 Boolean initActivatorInstance()
 {
-    dlopen("/var/jb/usr/lib/libactivator.dylib", RTLD_LAZY);
+    dlopen(JBROOT_PATH("/usr/lib/libactivator.dylib"), RTLD_LAZY);
     Class la = objc_getClass("LAActivator");
     if (la) { //libactivator is installed
         activatorInstance = [[ActivatorListener alloc] init];
