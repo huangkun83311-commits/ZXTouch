@@ -34,6 +34,30 @@
 
 
 
+安装
+
+```stylus
+# apt install ./zxtouch.deb
+You might want to run 'apt --fix-broken install' to correct these.
+Unsatisfied dependencies:
+ com.zjx.ioscontrol : Depends: python3 but it is not installed
+Error: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution).
+# apt --fix-broken install
+Correcting dependencies... Done 
+Installing dependencies:
+  libpython3.9  python3  python3.9
+
+Summary:
+  Upgrading: 0, Installing: 3, Removing: 0, Not Upgrading: 27
+  1 not fully installed or removed.
+  Download size: 17.7 MB
+  Space needed: 72.2 MB / 46.6 GB available
+
+Continue? [Y/n] y
+```
+
+
+
 ## Why building for V0.0.8 ?
 
 There all several commits after v0.0.7 release, which haven't been compiled for years.
