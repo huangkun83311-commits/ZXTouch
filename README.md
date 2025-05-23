@@ -58,6 +58,24 @@ Continue? [Y/n] y
 
 
 
+examples/Device Info.dbl
+
+![](img/device_info.gif)
+
+examples/Toast.dbl
+
+![](img/toast.gif)
+
+录制
+
+![](img/record.gif)
+
+回放录制的脚本
+
+![](img/replay.gif)
+
+
+
 ## Why building for V0.0.8 ?
 
 There all several commits after v0.0.7 release, which haven't been compiled for years.
