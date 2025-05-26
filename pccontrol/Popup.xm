@@ -6,6 +6,7 @@
 #include "Toast.h"
 #import <UIKit/UIKit.h>
 #import "jbroot.h"
+#include "TouchIndicator/TouchIndicatorWindow.h"
 
 extern CGFloat device_screen_width;
 extern CGFloat device_screen_height;
@@ -126,6 +127,7 @@ static int windowHeight = 250;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         NSError *err = nil;
         stopScriptPlaying(&err);
+        hideTouchIndicator();
         if (err)
         {
             showAlertBox(@"Error", [NSString stringWithFormat:@"Error happens while trying to stop script. %@", err], 999);

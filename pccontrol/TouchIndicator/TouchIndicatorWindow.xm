@@ -215,6 +215,10 @@ void startTouchIndicator(NSError **error)
     });
 }
 
+void hideTouchIndicator() {
+    [touchIndicatorWindow hideAllIndicators];
+}
+
 static void IOHIDEventCallbackForTouchIndicator(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef parentEvent) 
 {
     
@@ -312,6 +316,21 @@ static void IOHIDEventCallbackForTouchIndicator(void* target, void* refcon, IOHI
 
         [coordinateView[index-1] removeFromSuperview];
         coordinateView[index-1] = nil;
+    });
+}
+
+- (void)hideAllIndicators {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        for (int i = 0; i < 20; i++) {
+            UIView *indicator = touchIndicatorViewList[i];
+            if (indicator) {
+                [touchIndicatorViewList[i] removeFromSuperview];
+                touchIndicatorViewList[i] = nil;
+                
+                [coordinateView[i] removeFromSuperview];
+                coordinateView[i] = nil;
+            }
+        }
     });
 }
 

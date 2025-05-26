@@ -7,6 +7,7 @@
 void handleTouchIndicatorTaskWithRawData(UInt8* eventData, NSError **error);
 void stopTouchIndicator(NSError **error);
 void startTouchIndicator(NSError **error);
+void hideTouchIndicator();
 
 @interface TouchIndicatorWindow : NSObject
 {
@@ -15,6 +16,7 @@ void startTouchIndicator(NSError **error);
 
 - (id)init;
 - (void)hideIndicator:(int)index;
+- (void)hideAllIndicators;
 - (void)showIndicator:(int)index withX:(int)x andY:(int)y majorRadius:(CGFloat)radius;
 - (void)show;
 - (void)hide;
