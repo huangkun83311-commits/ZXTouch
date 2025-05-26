@@ -21,6 +21,7 @@ static int getTouchIndexFromDataArray(UInt8* dataArray, int index);
 static float getTouchXFromDataArray(UInt8* dataArray, int index);
 static float getTouchYFromDataArray(UInt8* dataArray, int index);
 void performTouchFromRawData(UInt8 *eventData);
+void performKeyboardEventFromRawData(UInt8 *eventData);
 
 static IOHIDEventRef generateChildEventTouchDown(int index, float x, float y);
 static IOHIDEventRef generateChildEventTouchMove(int index, float x, float y);

@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "Window.h"
 #include "SocketServer.h"
+#import "headers/IOHIDUsageTables.h"
 
 CFRunLoopRef recordRunLoop = NULL;
 static Boolean isRecording = false;
@@ -151,7 +152,7 @@ void startRecording(CFWriteStreamRef requestClient, NSError **error)
 //TODO: multi-touch support! get touch index automatically, rather than set to 7.
 static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef parentEvent) 
 {
-    //NSLog(@"### com.zjx.springboard: handle_event : %d", IOHIDEventGetType(event));
+    //NSLog(@"### com.zjx.springboard: handle_event : %d", IOHIDEventGetType(parentEvent));
     if (!scriptRecordingFileHandle)
     {
         isRecording = false;
@@ -174,7 +175,6 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
             int touch = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
             int index = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
             //NSLog(@"### com.zjx.springboard: x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
-            //NSLog(@"### com.zjx.springboard:  x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d.", x, y, eventMask, index, range, touch);
             float sleepusecs = (CFAbsoluteTimeGetCurrent() - lastEventTimeStampForRecording)*1000000;
             float xToWrite =  x*device_screen_width*10;
             float yToWrite =  y*device_screen_height*10;
@@ -208,14 +208,35 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
 		if (senderID == 0)
 			senderID = IOHIDEventGetSenderID(event);
         */
-
-
-        
-        
     }
     else if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeButton)
     {
         NSLog(@"### com.zjx.springboard: type: button, senderID: %qX", IOHIDEventGetType(parentEvent), IOHIDEventGetSenderID(parentEvent));
+    }
+    else if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeKeyboard) // 1. 获取事件类型
+    {
+        // 2. 获取Usage Page
+        uint32_t usagePage = IOHIDEventGetIntegerValue(parentEvent, kIOHIDEventFieldKeyboardUsagePage);
+        // 3. 检查是否是消费类设备页
+        if (usagePage == kHIDPage_Consumer) {
+            // 4. 获取Usage ID
+            uint32_t usage = IOHIDEventGetIntegerValue(parentEvent, kIOHIDEventFieldKeyboardUsage);
+            // 5. 检查是否是Home键 (Menu)
+            if (usage == kHIDUsage_Csmr_Menu) {
+                // 6. 判断是按下还是松开
+                bool isDown = IOHIDEventGetIntegerValue(parentEvent, kIOHIDEventFieldKeyboardDown);
+                
+                if (isDown) {
+                    //NSLog(@"Home button was pressed!");
+                } else {
+                    NSLog(@"Home button was released!");
+                }
+
+                float sleepusecs = (CFAbsoluteTimeGetCurrent() - lastEventTimeStampForRecording)*1000000;
+                [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n29%02d\n", sleepusecs, isDown] dataUsingEncoding:NSUTF8StringEncoding]];
+                lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
+            }
+        }
     }
 }
 

@@ -40,6 +40,15 @@ static int getTouchCountFromDataArray(UInt8* dataArray)
 }
 
 /*
+get count from data array by socket
+*/
+static int getKeyboardIsDownFromDataArray(UInt8* dataArray)
+{
+    int isDown = (dataArray[1] - '0');
+    return isDown;
+}
+
+/*
 get type from data array by socket
 */
 static int getTouchTypeFromDataArray(UInt8* dataArray, int index)
@@ -214,6 +223,27 @@ void performTouchFromRawData(UInt8 *eventData)
     postIOHIDEvent(parent);
     CFRelease(parent);
 }
+
+/**
+Perform keyboard events with data received from socket
+*/
+void performKeyboardEventFromRawData(UInt8 *eventData) {
+    // 创建Home键事件, isDown为true是按下，否则为抬起
+    bool isDown = getKeyboardIsDownFromDataArray(eventData);
+    NSLog(@"### com.zjx.springboard: Home button %d", isDown);
+    IOHIDEventRef homeButtonEvent = IOHIDEventCreateKeyboardEvent(
+        kCFAllocatorDefault,
+        mach_absolute_time(),
+        0x0C, // Usage Page: Consumer
+        0x40, // Usage: Menu/Home
+        isDown,
+        0
+    );
+
+    postIOHIDEvent(homeButtonEvent);
+    CFRelease(homeButtonEvent);
+}
+
 
 /**
 Post the parent event

@@ -50,6 +50,12 @@ void processTask(UInt8 *buff, CFWriteStreamRef writeStreamRef)
             performTouchFromRawData(eventData);
         }
     }
+    else if (taskType == TASK_PERFORM_KEYBOARD_EVNET)
+    {
+        @autoreleasepool{
+            performKeyboardEventFromRawData(eventData);
+        }
+    }
     else if (taskType == TASK_PROCESS_BRING_FOREGROUND) //bring to foreground
     {
         @autoreleasepool{   
