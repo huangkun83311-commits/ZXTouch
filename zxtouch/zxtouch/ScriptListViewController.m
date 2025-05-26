@@ -69,6 +69,39 @@
         currentFolder = SCRIPTS_PATH;
 
     [self insertFileListIntoArray:scriptList fromPath:currentFolder];
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    [scriptList sortUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {
+        BOOL isDir1 = NO, isDir2 = NO;
+        [fm fileExistsAtPath:path1 isDirectory:&isDir1];
+        [fm fileExistsAtPath:path2 isDirectory:&isDir2];
+        
+        if (isDir1 && !isDir2) {
+            return NSOrderedAscending; // 目录在前
+        } else if (!isDir1 && isDir2) {
+            return NSOrderedDescending;
+        } else {
+            // 都是目录或都不是目录
+            if (!isDir1 && !isDir2) {
+                // 都是文件，判断bdl扩展
+                NSString *ext1 = [[path1 pathExtension] lowercaseString];
+                NSString *ext2 = [[path2 pathExtension] lowercaseString];
+                BOOL isBDL1 = [ext1 isEqualToString:@"bdl"];
+                BOOL isBDL2 = [ext2 isEqualToString:@"bdl"];
+                
+                if (isBDL1 && !isBDL2) {
+                    return NSOrderedAscending; // bdl在前
+                } else if (!isBDL1 && isBDL2) {
+                    return NSOrderedDescending;
+                }
+            }
+            // 同类型（目录、bdl、普通文件），按名称排序
+            NSString *name1 = [[[path1 lastPathComponent] stringByDeletingPathExtension] lowercaseString];
+            NSString *name2 = [[[path2 lastPathComponent] stringByDeletingPathExtension] lowercaseString];
+            return [name1 compare:name2 options:NSCaseInsensitiveSearch];
+        }
+    }];
 
     // add scripts from documents list
     return scriptList;
@@ -94,14 +127,7 @@
             continue;
         }
         NSString *filePath = [NSString stringWithFormat:@"%@/%@", path, fileName];
-        if (![[fileName pathExtension] isEqualToString:@"bdl"] && [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir] && isDir)
-        {
-            [arr insertObject:filePath atIndex:0];
-        }
-        else
-        {
-            [arr addObject:filePath];
-        }
+        [arr addObject:filePath];
     }
     
     return YES;
