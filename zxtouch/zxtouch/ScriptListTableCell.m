@@ -9,6 +9,8 @@
 #import "Socket.h"
 #import "Util.h"
 
+BOOL connected = NO;
+
 @implementation ScriptListTableCell
 {
     NSString* filePath;
@@ -20,19 +22,24 @@
 }
 
 - (IBAction)playButtonClick:(id)sender {
-    Socket *springBoardSocket = [[Socket alloc] init];
-    int ret = [springBoardSocket connect:@"127.0.0.1" byPort:6000];
-    if (ret != 0) {
-        return;
-    }
-    
-    [springBoardSocket send:[NSString stringWithFormat:@"19%@", filePath]];
-    NSString* result = [springBoardSocket recv:1024];
-    if ([result characterAtIndex:0] != '0')
-    {
-        [Util showAlertBoxWithOneOption:_parentViewController title:@"Error" message:[NSString stringWithFormat:@"Cannot play script. Error: %@", result] buttonString:@"OK"];
-    }
-    [springBoardSocket close];
+    connected = YES;
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        Socket *springBoardSocket = [[Socket alloc] init];
+        int ret = [springBoardSocket connect:@"127.0.0.1" byPort:6000];
+        if (ret != 0) {
+            return;
+        }
+        
+        [springBoardSocket send:[NSString stringWithFormat:@"19%@", self->filePath]];
+        NSString *result = [springBoardSocket recv:1024];
+        if (result.length == 0 || [result characterAtIndex:0] != '0') {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [Util showAlertBoxWithOneOption:self->_parentViewController title:@"Error" message:[NSString stringWithFormat:@"Cannot play script. Error: %@", result] buttonString:@"OK"];
+            });
+        }
+        [springBoardSocket close];
+        connected = NO;
+    });
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
