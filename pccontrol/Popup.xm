@@ -12,7 +12,7 @@ extern CGFloat device_screen_width;
 extern CGFloat device_screen_height;
 
 static int windowWidth = 250;
-static int windowHeight = 250;
+static int windowHeight = 150;
 
 @implementation PopupWindow
 {
@@ -38,29 +38,24 @@ static int windowHeight = 250;
             int windowLeftTopCornerY = (int)((screenHeight/scale)/2 - windowHeight/2);
             _window = [[UIWindow alloc] initWithFrame:CGRectMake(windowLeftTopCornerX, windowLeftTopCornerY, windowWidth, windowHeight)];
             _window.windowLevel = UIWindowLevelAlert;
-            [_window setBackgroundColor:[UIColor whiteColor]];
+            [_window setBackgroundColor:[UIColor colorWithRed:0.3 green:0.4 blue:0.2 alpha:0.3]];
 
-            _window.layer.borderColor = [UIColor whiteColor].CGColor;
-            _window.layer.borderWidth = 2.0f;
+            UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]
+                                          initWithTarget:self
+                                          action:@selector(handlePan:)];
+            [_window addGestureRecognizer:panGesture];
+
+
             _window.layer.cornerRadius = 15.0f;
             // Add header
             NSString *headerText = @"ZXTouch Panel";
 
-            UIFont * font = [UIFont systemFontOfSize:25];
+            UIFont * font = [UIFont systemFontOfSize:22];
             CGSize headerSize = [headerText sizeWithFont:font];
 
-            UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(windowWidth/2 - headerSize.width/2, 0, headerSize.width, headerSize.height)];
+            UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(windowWidth/2 - headerSize.width/2 - 10, 5, headerSize.width, headerSize.height)];
             headerLabel.font = font;
             headerLabel.text = headerText;
-            headerLabel.numberOfLines = 1;
-            headerLabel.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
-            headerLabel.adjustsFontSizeToFitWidth = YES;
-            headerLabel.adjustsLetterSpacingToFitWidth = YES;
-            headerLabel.minimumScaleFactor = 10.0f/12.0f;
-            headerLabel.clipsToBounds = YES;
-            headerLabel.backgroundColor = [UIColor clearColor];
-            headerLabel.textColor = [UIColor blackColor];
-            headerLabel.textAlignment = NSTextAlignmentLeft;
             [_window addSubview:headerLabel];
 
             // Add hide button
@@ -77,7 +72,7 @@ static int windowHeight = 250;
  
             closeButton.backgroundColor = [UIColor clearColor];
 
-            closeButton.frame = CGRectMake(windowWidth-25, 5, 20, 20);
+            closeButton.frame = CGRectMake(windowWidth-35, 5, 30, 30);
             [_window addSubview:closeButton];
 
             // row 2 buttons
@@ -90,7 +85,7 @@ static int windowHeight = 250;
             recordButton.backgroundColor = [UIColor clearColor];
             [recordButton setImage:[UIImage imageWithContentsOfFile:JBROOT_PATH_OC("/Library/Application Support/zxtouch/start-recording.png")] forState:UIControlStateNormal];
 
-            recordButton.frame = CGRectMake(30, headerSize.height + 10, 50, 50);
+            recordButton.frame = CGRectMake(30, headerSize.height + 10, 60, 60);
             [_window addSubview:recordButton];
 
             // add stop script button
@@ -102,12 +97,27 @@ static int windowHeight = 250;
             stopButton.backgroundColor = [UIColor clearColor];
             [stopButton setImage:[UIImage imageWithContentsOfFile:JBROOT_PATH_OC("/Library/Application Support/zxtouch/stop-playing.png")] forState:UIControlStateNormal];
 
-            stopButton.frame = CGRectMake(100, headerSize.height + 10, 50, 50);
+            stopButton.frame = CGRectMake(100, headerSize.height + 10, 60, 60);
             [_window addSubview:stopButton];
         });
         isShown = NO;        
     }
     return self;
+}
+
+// 处理拖动手势
+- (void)handlePan:(UIPanGestureRecognizer *)gesture {
+    CGPoint translation = [gesture translationInView:_window];
+
+    if (gesture.state == UIGestureRecognizerStateChanged) {
+        // 移动视图
+        gesture.view.center = CGPointMake(
+            gesture.view.center.x + translation.x,
+            gesture.view.center.y + translation.y
+        );
+        // 重置 translation，否则会累积
+        [gesture setTranslation:CGPointZero inView:_window];
+    }
 }
 
 - (void) recordingStart {
