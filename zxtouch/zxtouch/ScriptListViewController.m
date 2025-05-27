@@ -118,8 +118,6 @@
         return NO;
     }
     
-    
-    BOOL isDir = NO;
     for (NSString *fileName in files)
     {
         if ([[fileName substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"."])

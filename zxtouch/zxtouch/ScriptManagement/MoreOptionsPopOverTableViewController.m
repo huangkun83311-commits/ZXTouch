@@ -40,8 +40,8 @@
     UINib *entryCellNib = [UINib nibWithNibName:@"TableViewCellWithSingleButton" bundle:nil];
     [tableView registerNib:entryCellNib forCellReuseIdentifier:@"SingleButtonCell"];
     
-    int rows = [self tableView:tableView numberOfRowsInSection:0];
-    self.preferredContentSize = CGSizeMake(300, rows*50);
+    NSInteger rows = [self tableView:tableView numberOfRowsInSection:0];
+    self.preferredContentSize = CGSizeMake(300, rows * 50);
     
     NSLog(@"script folder: %@", currentFolder);
 }
@@ -135,7 +135,7 @@
 
     NSString *newDirectoryPath = dest;
 
-    [[NSFileManager defaultManager] createDirectoryAtPath:newDirectoryPath attributes:nil];
+    [[NSFileManager defaultManager] createDirectoryAtPath:newDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
 
     NSError *error = nil;
 

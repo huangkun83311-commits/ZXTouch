@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MoreOptionsPopOverTableViewController : UITableViewController
+@interface MoreOptionsPopOverTableViewController : UITableViewController <UIPopoverPresentationControllerDelegate>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 - (id)initWithFolderPath:(NSString *)path;

@@ -70,7 +70,7 @@ BOOL connected = NO;
     if ([[path pathExtension] isEqualToString:@"bdl"]) // is script. can play
     {
         // Now the image will have been loaded and decoded and is ready to rock for the main thread
-        [[self imageView] setImage:[UIImage imageNamed:@"script-icon"]];
+        [_iconImage setImage:[UIImage imageNamed:@"script-icon"]];
         
         return;
     }
@@ -80,11 +80,11 @@ BOOL connected = NO;
 
     if (!isDir)
     {
-        [[self imageView] setImage:[UIImage imageNamed:@"normal-file-icon"]];
+        [_iconImage setImage:[UIImage imageNamed:@"normal-file-icon"]];
     }
     else
     {
-        [[self imageView] setImage:[UIImage imageNamed:@"folder-icon"]];
+        [_iconImage setImage:[UIImage imageNamed:@"folder-icon"]];
     }
 }
 
