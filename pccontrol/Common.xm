@@ -55,7 +55,7 @@ Check whether current device is an iPad
 */
 Boolean isIpad()
 {
-    if ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
     {
         return YES;
     }
@@ -200,7 +200,7 @@ pid_t system2(const char * command, int * infp, int * outfp)
 extern "C"
 CFNotificationCenterRef CFNotificationCenterGetDistributedCenter(void);
 extern "C"
-CF_EXPORT void CFNotificationCenterPostNotification(CFNotificationCenterRef center, CFNotificationName name, const void *object, CFDictionaryRef userInfo, Boolean deliverImmediately);
+void CFNotificationCenterPostNotification(CFNotificationCenterRef center, CFNotificationName name, const void *object, CFDictionaryRef userInfo, Boolean deliverImmediately);
 void postSysNotification(const char *message) {
     /*
      可以使用DarwinNotifyCenter也可以使用DistributedCenter，但是需要两边一致
@@ -235,6 +235,8 @@ int system3(const char * command) {
 
     // 在本进程中执行
     zx_excute_cmd(command);
+
+    return 0;
 }
 
 void zx_excute_cmd(const char * arg) {

@@ -62,7 +62,7 @@ void socketServer()
 
 }
 
-static void readStream(CFReadStreamRef readStream, CFStreamEventType eventype, void * clientCallBackInfo) 
+void readStream(CFReadStreamRef readStream, CFStreamEventType eventype, void * clientCallBackInfo) 
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool{
@@ -101,7 +101,7 @@ int notifyClient(UInt8* msg, CFWriteStreamRef client)
     return result;
 }
 
-static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info)
+void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info)
 {
     if (kCFSocketAcceptCallBack == type) {
         
@@ -118,7 +118,7 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
         }
         
         struct sockaddr_in *addr_in = (struct sockaddr_in *)name;
-        NSLog(@"### com.zjx.springboard: connection starts", inet_ntoa(addr_in-> sin_addr), addr_in->sin_port);
+        NSLog(@"### com.zjx.springboard: connection %s:%d starts", inet_ntoa(addr_in-> sin_addr), addr_in->sin_port);
         
         readStreamRef = NULL;
         writeStreamRef = NULL;

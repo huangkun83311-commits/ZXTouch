@@ -30,6 +30,6 @@
 #define TASK_TEST 99
 
 void processTask(UInt8 *buff, CFWriteStreamRef writeStreamRef = NULL);
-static int getTaskType(UInt8* dataArray);
+int getTaskType(UInt8* dataArray);
 
 #endif

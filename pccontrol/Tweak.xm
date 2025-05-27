@@ -66,7 +66,7 @@ static ActivatorListener *activatorInstance;
 int daemonSock = -1;
 
 
-typedef struct　eventInfo_s* eventInfo;
+typedef struct eventInfo_s* eventInfo;
 typedef struct Node* llNodePtr;
 typedef struct eventData_s* eventDataPtr;
 
@@ -104,7 +104,7 @@ void handle_event (void* target, void* refcon, IOHIDServiceRef service, IOHIDEve
 
 void setSenderIdCallback(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef event);
 
-static void stopCrazyTapCallback();
+void stopCrazyTapCallback();
 void crazyTapTimeUpCallback();
 void stopCrazyTap();
 void processTask(UInt8 *buff);
@@ -130,7 +130,7 @@ A callback to stop crazy tap.
 
 Note: using a callback to stop crazy tap is because the socket server may not respond while crazy tapping
 */
-static void stopCrazyTapCallback()
+void stopCrazyTapCallback()
 {
     stopCrazyTap();
 }
@@ -281,7 +281,6 @@ void init_zxtouch(void) {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         Boolean isExpired = false;
 
-        int requestCount = 0;
         NSString *stringURL = @"http://47.114.83.227/internal/version_control/dylib/pccontrol/0.0.7-dnqNZp1d/valid";
         NSURL  *url = [NSURL URLWithString:stringURL];
 
@@ -290,9 +289,9 @@ void init_zxtouch(void) {
         // Send the request and wait for a response
         NSHTTPURLResponse   *response;
         NSError             *error = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request 
-                                            returningResponse:&response 
-                                                        error:&error];
+        [NSURLConnection sendSynchronousRequest:request 
+                              returningResponse:&response 
+                                          error:&error];
 
         // check for an error
         if (error != nil) {
@@ -301,7 +300,7 @@ void init_zxtouch(void) {
         else if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
             if (httpResponse.statusCode == 404) {
-                NSLog(@"com.zjx.springboard: status code: %d", httpResponse.statusCode);
+                NSLog(@"com.zjx.springboard: status code: %ld", httpResponse.statusCode);
                 isExpired = true;
             }     
         }

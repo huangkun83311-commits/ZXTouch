@@ -80,7 +80,7 @@ NSString* performTextRecognizerTextFromRawData(UInt8* eventData, NSError** error
         // set properties
         if ([customWords count] > 1 || ![customWords[0] isEqualToString:@""])
         {
-            NSLog(@"com.zjx.springboard: custom words set. Count: %d", [customWords count]);
+            NSLog(@"com.zjx.springboard: custom words set. Count: %lu", [customWords count]);
             [ocrManager setCustomWords:customWords];
         }
         [ocrManager setMinimumHeight:minimumHeight];

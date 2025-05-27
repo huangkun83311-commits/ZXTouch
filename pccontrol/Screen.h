@@ -18,7 +18,6 @@
 + (CGRect)getBounds;
 + (NSString*)screenShotAlwaysUp;
 + (UIImage*)screenShotUIImage;
-+ (void)releaseUIImage:(UIImage**)img;
 + (CGImageRef)createScreenShotCGImageRef;
 
 @end

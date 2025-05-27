@@ -12,8 +12,8 @@
 #define ADDR "0.0.0.0"
 
 void socketServer();
-static void readStream(CFReadStreamRef readStream, CFStreamEventType eventype, void * clientCallBackInfo);
-static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info);
+void readStream(CFReadStreamRef readStream, CFStreamEventType eventype, void * clientCallBackInfo);
+void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info);
 int notifyClient(UInt8* msg, CFWriteStreamRef client);
 
 #endif

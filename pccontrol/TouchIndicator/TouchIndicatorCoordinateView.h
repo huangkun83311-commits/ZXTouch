@@ -13,7 +13,4 @@
 @interface TouchIndicatorCoordinateView : UIView
 @property (weak, nonatomic) UILabel* coordinateLabel;
 
-
--(void)dealloc;
-
 @end

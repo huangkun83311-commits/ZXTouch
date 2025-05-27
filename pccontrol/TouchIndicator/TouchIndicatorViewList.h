@@ -5,7 +5,7 @@
 
 }
 
-- (int)count;
-- (TouchIndicatorView*)get:(int)index;
+//- (int)count;
+//- (TouchIndicatorView*)get:(int)index;
 
 @end

@@ -73,13 +73,13 @@ NSString* searchRGBFromRawData(UInt8 *eventData, NSError **error)
 
         if (x > screenWidth)
         {
-            *error = [NSError errorWithDomain:@"com.zjx.zxtouchsp" code:999 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"-1;;The range of the x coordinate should be less than the width of your screen. The width of your screen is %d. Your x: %d\r\n", screenWidth, x]}];
+            *error = [NSError errorWithDomain:@"com.zjx.zxtouchsp" code:999 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"-1;;The range of the x coordinate should be less than the width of your screen. The width of your screen is %zu. Your x: %d\r\n", screenWidth, x]}];
             NSLog(@"com.zjx.springboard: %@", *error);
             return @"";
         }
         if (y > screenHeight)
         {
-            *error = [NSError errorWithDomain:@"com.zjx.zxtouchsp" code:999 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"-1;;The range of the y coordinate should be less than the height of your screen. The height of your screen is %d. Your y: %d\r\n", screenHeight, y]}];
+            *error = [NSError errorWithDomain:@"com.zjx.zxtouchsp" code:999 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"-1;;The range of the y coordinate should be less than the height of your screen. The height of your screen is %zu. Your y: %d\r\n", screenHeight, y]}];
             NSLog(@"com.zjx.springboard: %@", *error);
             return @"";
         }
@@ -103,7 +103,7 @@ NSString* searchRGBFromRawData(UInt8 *eventData, NSError **error)
         }
         if (skip < 0)
         {
-            *error = [NSError errorWithDomain:@"com.zjx.zxtouchsp" code:999 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"-1;;Skip cannot be negative\r\n", skip]}];
+            *error = [NSError errorWithDomain:@"com.zjx.zxtouchsp" code:999 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"%d;;Skip cannot be negative\r\n", skip]}];
             NSLog(@"com.zjx.springboard: %@", *error);
             return @"";
         }

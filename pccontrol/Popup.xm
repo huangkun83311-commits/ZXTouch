@@ -38,7 +38,7 @@ static int windowHeight = 150;
             int windowLeftTopCornerY = (int)((screenHeight/scale)/2 - windowHeight/2);
             _window = [[UIWindow alloc] initWithFrame:CGRectMake(windowLeftTopCornerX, windowLeftTopCornerY, windowWidth, windowHeight)];
             _window.windowLevel = UIWindowLevelAlert;
-            [_window setBackgroundColor:[UIColor colorWithRed:0.3 green:0.4 blue:0.2 alpha:0.3]];
+            [_window setBackgroundColor:[UIColor colorWithRed:0.3 green:0.4 blue:0.2 alpha:0.5]];
 
             UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]
                                           initWithTarget:self
@@ -51,7 +51,7 @@ static int windowHeight = 150;
             NSString *headerText = @"ZXTouch Panel";
 
             UIFont * font = [UIFont systemFontOfSize:22];
-            CGSize headerSize = [headerText sizeWithFont:font];
+            CGSize headerSize = [headerText sizeWithAttributes:@{NSFontAttributeName: font}];
 
             UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(windowWidth/2 - headerSize.width/2 - 10, 5, headerSize.width, headerSize.height)];
             headerLabel.font = font;

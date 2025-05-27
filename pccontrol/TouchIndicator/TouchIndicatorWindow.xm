@@ -150,7 +150,7 @@ void startTouchIndicator(NSError **error)
         CGFloat red = 255;
         CGFloat green = 0;
         CGFloat blue = 0;
-        CGFloat alpha = 0.7f;
+        //CGFloat alpha = 0.7f;
 
         if ([[NSFileManager defaultManager] fileExistsAtPath:configFilePath])
         {
@@ -166,7 +166,7 @@ void startTouchIndicator(NSError **error)
                 red = [config[@"touch_indicator"][@"color"][@"r"] floatValue];
                 green = [config[@"touch_indicator"][@"color"][@"g"] floatValue];
                 blue = [config[@"touch_indicator"][@"color"][@"b"] floatValue];
-                alpha = [config[@"touch_indicator"][@"color"][@"alpha"] floatValue];
+                //alpha = [config[@"touch_indicator"][@"color"][@"alpha"] floatValue];
                 NSLog(@"com.zjx.springboard: red: %f, g: %f, b: %f", red, green, blue);
             }
             @catch (NSException *exception) {
@@ -235,12 +235,11 @@ static void IOHIDEventCallbackForTouchIndicator(void* target, void* refcon, IOHI
 
         for (int i = 0; i < [childrens count]; i++)
         {
-            Boolean print = false;
             IOHIDEventRef event = (__bridge IOHIDEventRef)childrens[i];
             IOHIDFloat x = IOHIDEventGetFloatValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerX);
             IOHIDFloat y = IOHIDEventGetFloatValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerY);
             int eventMask = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerEventMask);
-            int range = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
+            //int range = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
             int touch = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
             int index = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
             //NSLog(@"### com.zjx.springboard: x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
@@ -354,7 +353,7 @@ static void IOHIDEventCallbackForTouchIndicator(void* target, void* refcon, IOHI
         // create touch coordinate view
         NSString *coordinateText = [NSString stringWithFormat:@"(%d, %d)", (int)(x * scale), (int)(y * scale)];
         UIFont *font = [UIFont fontWithName: @"Trebuchet MS" size: 11.0f];
-        CGSize stringSize = [coordinateText sizeWithFont:font]; 
+        CGSize stringSize = [coordinateText sizeWithAttributes:@{NSFontAttributeName: font}]; 
         CGFloat stringWidth = stringSize.width;
 
         TouchIndicatorCoordinateView *coordinateLabelView = [[TouchIndicatorCoordinateView alloc] initWithFrame:CGRectMake(x + halfSize + 5, y, stringWidth+5, COORDINATE_VIEW_HEIGHT)];
@@ -430,7 +429,7 @@ static void IOHIDEventCallbackForTouchIndicator(void* target, void* refcon, IOHI
 
         NSString *coordinateText = [NSString stringWithFormat:@"(%d, %d)", (int)(x*scale), (int)(y*scale)];
         UIFont *font = [UIFont fontWithName: @"Trebuchet MS" size: 11.0f];
-        CGSize stringSize = [coordinateText sizeWithFont:font]; 
+        CGSize stringSize = [coordinateText sizeWithAttributes:@{NSFontAttributeName: font}]; 
         CGFloat stringWidth = stringSize.width;
 
         coordinateView[index-1].coordinateLabel.text = coordinateText;

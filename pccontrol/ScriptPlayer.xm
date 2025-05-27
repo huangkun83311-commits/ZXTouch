@@ -184,6 +184,8 @@ static BOOL isPlaying = false;
         });
         
     }
+
+    return 0;
 }
 
 // play the script
@@ -196,6 +198,8 @@ static BOOL isPlaying = false;
         return -1;
     }
    [self runScript:error];
+
+   return 0;
 }
 
 
@@ -216,9 +220,7 @@ static BOOL isPlaying = false;
         return;
     }
     
-    char buffer[256];
-    int taskType;
-    int sleepTime;
+    char buffer[256] = {};
     
     while (fgets(buffer, sizeof(char)*256, file) != NULL)
     {

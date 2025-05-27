@@ -33,7 +33,7 @@ static int eventsToAppend[MAX_FINGER_INDEX][4];
 /*
 get count from data array by socket
 */
-static int getTouchCountFromDataArray(UInt8* dataArray)
+int getTouchCountFromDataArray(UInt8* dataArray)
 {
 	int count = (dataArray[0] - '0');
 	return count;
@@ -42,7 +42,7 @@ static int getTouchCountFromDataArray(UInt8* dataArray)
 /*
 get count from data array by socket
 */
-static int getKeyboardIsDownFromDataArray(UInt8* dataArray)
+int getKeyboardIsDownFromDataArray(UInt8* dataArray)
 {
     int isDown = (dataArray[1] - '0');
     return isDown;
@@ -51,7 +51,7 @@ static int getKeyboardIsDownFromDataArray(UInt8* dataArray)
 /*
 get type from data array by socket
 */
-static int getTouchTypeFromDataArray(UInt8* dataArray, int index)
+int getTouchTypeFromDataArray(UInt8* dataArray, int index)
 {
 	int type = (dataArray[1+index*TOUCH_DATA_LEN] - '0');
 	return type;
@@ -60,7 +60,7 @@ static int getTouchTypeFromDataArray(UInt8* dataArray, int index)
 /*
 get index from data array by socket
 */
-static int getTouchIndexFromDataArray(UInt8* dataArray, int index)
+int getTouchIndexFromDataArray(UInt8* dataArray, int index)
 {
 	int touchIndex = 0;
 	for (int i = 2; i <= 3; i++)
@@ -73,7 +73,7 @@ static int getTouchIndexFromDataArray(UInt8* dataArray, int index)
 /*
 get x from data array by socket
 */
-static float getTouchXFromDataArray(UInt8* dataArray, int index)
+float getTouchXFromDataArray(UInt8* dataArray, int index)
 {
 	int x = 0;
 	for (int i = 4; i <= 8; i++)
@@ -87,7 +87,7 @@ static float getTouchXFromDataArray(UInt8* dataArray, int index)
 /*
 get y from data array by socket
 */
-static float getTouchYFromDataArray(UInt8* dataArray, int index)
+float getTouchYFromDataArray(UInt8* dataArray, int index)
 {
 	int y = 0;
 	for (int i = 9; i <= 13; i++)
@@ -103,7 +103,7 @@ index: index of the finger
 x: coordinate x of the screen (before conversion)
 y: coordinate y of the screen (before conversion)
 */
-static IOHIDEventRef generateChildEventTouchDown(int index, float x, float y)
+IOHIDEventRef generateChildEventTouchDown(int index, float x, float y)
 {
 	IOHIDEventRef child = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), index, 3, 3, x/device_screen_width, y/device_screen_height, 0.0f, 0.0f, 0.0f, 1, 1, 0);
     IOHIDEventSetFloatValue(child, 0xb0014, 0.04f); //set the major index getRandomNumberFloat(0.03, 0.05)
@@ -117,7 +117,7 @@ index: index of the finger
 x: coordinate x of the screen (before conversion)
 y: coordinate y of the screen (before conversion)
 */
-static IOHIDEventRef generateChildEventTouchMove(int index, float x, float y)
+IOHIDEventRef generateChildEventTouchMove(int index, float x, float y)
 {
 	IOHIDEventRef child = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), index, 3, 4, x/device_screen_width, y/device_screen_height, 0.0f, 0.0f, 0.0f, 1, 1, 0);
     IOHIDEventSetFloatValue(child, 0xb0014, 0.04f); //set the major index
@@ -131,7 +131,7 @@ index: index of the finger
 x: coordinate x of the screen (before conversion)
 y: coordinate y of the screen (before conversion)
 */
-static IOHIDEventRef generateChildEventTouchUp(int index, float x, float y)
+IOHIDEventRef generateChildEventTouchUp(int index, float x, float y)
 {
 	IOHIDEventRef child = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, mach_absolute_time(), index, 3, 2, x/device_screen_width, y/device_screen_height, 0.0f, 0.0f, 0.0f, 0, 0, 0);
     IOHIDEventSetFloatValue(child, 0xb0014, 0.04f); //set the major index
@@ -248,7 +248,7 @@ void performKeyboardEventFromRawData(UInt8 *eventData) {
 /**
 Post the parent event
 */
-static void postIOHIDEvent(IOHIDEventRef event)
+void postIOHIDEvent(IOHIDEventRef event)
 {
     static IOHIDEventSystemClientRef ioSystemClient = NULL;
     if (!ioSystemClient){
@@ -314,7 +314,7 @@ void initSenderId()
 /*
 Get the sender id and unregister itself.
 */
-static void setSenderIdCallback(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef event)
+void setSenderIdCallback(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef event)
 {
     if (IOHIDEventGetType(event) == kIOHIDEventTypeDigitizer){
 		if (senderID == 0x0)

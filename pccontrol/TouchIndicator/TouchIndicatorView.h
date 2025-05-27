@@ -13,7 +13,4 @@
 @interface TouchIndicatorView : UIView
 @property (weak, nonatomic) NSString* fingerIndex;
 
-
--(void)dealloc;
-
 @end

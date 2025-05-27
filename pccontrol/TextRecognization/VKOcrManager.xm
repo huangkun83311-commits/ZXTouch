@@ -68,11 +68,11 @@
         if (aarea.origin.x != 0 || aarea.origin.y != 0 || aarea.size.width != 0 || aarea.size.height != 0)
         {
             CGFloat y = imageHeight - aarea.origin.y - aarea.size.height;
-            requestHandler = [[VNImageRequestHandler alloc] initWithCIImage:[image imageByCroppingToRect:CGRectMake(aarea.origin.x, y, aarea.size.width, aarea.size.height)] options:nil];
+            requestHandler = [[VNImageRequestHandler alloc] initWithCIImage:[image imageByCroppingToRect:CGRectMake(aarea.origin.x, y, aarea.size.width, aarea.size.height)] options:@{}];
         }
         else
         {
-            requestHandler = [[VNImageRequestHandler alloc] initWithCIImage:image options:nil];
+            requestHandler = [[VNImageRequestHandler alloc] initWithCIImage:image options:@{}];
         }
 
         request = [[VNRecognizeTextRequest alloc] initWithCompletionHandler:^(VNRequest *request, NSError *error){
@@ -154,8 +154,8 @@ Return the string from a area
 /*
 Return area that contain text
 */
-- (NSArray*)areasOfText {
-
+- (NSArray *)areasOfText {
+    return nil;
 }
 
 - (void)outputDebugImage:(NSString*)imagePath error:(NSError**)error{
@@ -203,9 +203,6 @@ Return area that contain text
 
 -(UIImage *)drawDebugOutputfromArray:(NSArray<VNRecognizedTextObservation*>*)arr error:(NSError**)error{
     // reformat rect (don't know why there is size differnt here)
-    CGFloat scale = [Screen getScale];
-    CGRect screenBounds = [Screen getBounds];
-
     UIImage* image = [[UIImage alloc] initWithCIImage:img];
     
     CGFloat imageAbsoluteWidth = image.size.width;
@@ -226,7 +223,7 @@ Return area that contain text
     [self drawRectangle:recognizeRect inContext:ctx withColor:[UIColor redColor]];
 
     [[UIColor redColor] setFill]; // set color
-    [[NSString stringWithFormat:@"Rect:(%d, %d, %d, %d)", (int)recognizeRect.origin.x, (int)recognizeRect.origin.y, (int)recognizeRect.size.width, (int)recognizeRect.size.height] drawInRect:CGRectIntegral(recognizeRect) withFont:[UIFont boldSystemFontOfSize:30]]; 
+    [[NSString stringWithFormat:@"Rect:(%d, %d, %d, %d)", (int)recognizeRect.origin.x, (int)recognizeRect.origin.y, (int)recognizeRect.size.width, (int)recognizeRect.size.height] drawInRect:CGRectIntegral(recognizeRect) withAttributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:30]}];
 
     for (VNRecognizedTextObservation* i in arr)
     {
@@ -263,7 +260,7 @@ Return area that contain text
         [[UIColor redColor] setFill]; // set color
         UIFont *font = [UIFont boldSystemFontOfSize:20]; //set font size
         rect.origin.y = rect.origin.y + rect.size.height; // draw
-        [textString drawInRect:CGRectIntegral(rect) withFont:font]; 
+        [textString drawInRect:CGRectIntegral(rect) withAttributes:@{NSFontAttributeName: font}]; 
 
         //NSLog(@"com.zjx.springboard: string: %@, topLeft: %f, topright:%f", textString, boundingBox.topLeft.x, boundingBox.topRight.x);
 

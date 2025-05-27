@@ -24,7 +24,7 @@ extern CFRunLoopRef recordRunLoop;
 /*
 get task type
 */
-static int getTaskType(UInt8* dataArray)
+int getTaskType(UInt8* dataArray)
 {
 	int taskType = 0;
 	for (int i = 0; i <= 1; i++)

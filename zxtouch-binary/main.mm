@@ -13,7 +13,7 @@ int executeCommand();
 int playBackFromRawFile();
 
 int getSpringboardSocket() {
-    int sock = 0, valread;
+    int sock = 0;
      struct sockaddr_in serv_addr;
 
      if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -173,5 +173,7 @@ int playBackFromRawFile()
             send(sbSocket , buffer, strlen(buffer) , 0);
         }
     }
+    
+    return 0;
 }
 

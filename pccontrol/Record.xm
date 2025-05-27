@@ -85,7 +85,7 @@ void startRecording(CFWriteStreamRef requestClient, NSError **error)
     }
 
     // write to plist file in script directory
-    [infoDict writeToFile:[NSString stringWithFormat:@"%@/info.plist", scriptDirectory, currentDateTime] atomically:YES];
+    [infoDict writeToFile:[NSString stringWithFormat:@"%@/info.plist", scriptDirectory] atomically:YES];
 
 
     // generate a raw file for writing
@@ -150,7 +150,7 @@ void startRecording(CFWriteStreamRef requestClient, NSError **error)
 }
 
 //TODO: multi-touch support! get touch index automatically, rather than set to 7.
-static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef parentEvent) 
+void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef service, IOHIDEventRef parentEvent) 
 {
     //NSLog(@"### com.zjx.springboard: handle_event : %d", IOHIDEventGetType(parentEvent));
     if (!scriptRecordingFileHandle)
@@ -166,12 +166,11 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
 
         for (int i = 0; i < [childrens count]; i++)
         {
-            Boolean print = false;
             IOHIDEventRef event = (__bridge IOHIDEventRef)childrens[i];
             IOHIDFloat x = IOHIDEventGetFloatValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerX);
             IOHIDFloat y = IOHIDEventGetFloatValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerY);
             int eventMask = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerEventMask);
-            int range = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
+            //int range = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
             int touch = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
             int index = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
             //NSLog(@"### com.zjx.springboard: x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
@@ -185,7 +184,6 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
                 //NSLog(@"com.zjx.springboard: Touch down. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x*device_screen_width, y*device_screen_height, index, eventMask, range, touch);
                 [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n1011%02d%05.0f%05.0f\n", sleepusecs, index, xToWrite, yToWrite] dataUsingEncoding:NSUTF8StringEncoding]];
                 lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
-                print = true;
             }
             else if ( touch == 1 && eventMask & 4 )
             {
@@ -193,7 +191,6 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
                 //NSLog(@"com.zjx.springboard: touch moved to (%f, %f). index: %d. eventmask: %d, range: %d, touch: %d", x*device_screen_width, y*device_screen_height, index, eventMask, range, touch);
                 [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n1012%02d%05.0f%05.0f\n", sleepusecs, index, xToWrite, yToWrite] dataUsingEncoding:NSUTF8StringEncoding]];
                 lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
-                print = true;
             }
             else if (!touch && (eventMask & 2) )
             {
@@ -201,7 +198,6 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
                 //NSLog(@"com.zjx.springboard: Touch up. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x*device_screen_width, y*device_screen_height, index, eventMask, range, touch);
                 [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n1010%02d%05.0f%05.0f\n", sleepusecs, index, xToWrite, yToWrite] dataUsingEncoding:NSUTF8StringEncoding]];
                 lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
-                print = true;
             }
         }
         /*
@@ -211,7 +207,7 @@ static void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef
     }
     else if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeButton)
     {
-        NSLog(@"### com.zjx.springboard: type: button, senderID: %qX", IOHIDEventGetType(parentEvent), IOHIDEventGetSenderID(parentEvent));
+        NSLog(@"### com.zjx.springboard: type: button, senderID: %llX", IOHIDEventGetSenderID(parentEvent));
     }
     else if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeKeyboard) // 1. 获取事件类型
     {

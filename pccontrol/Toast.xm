@@ -99,7 +99,7 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
         }
 
         UIFont * font = [UIFont systemFontOfSize:fontSize weight:UIFontWeightLight];
-        CGSize contentSize = [content sizeWithFont:font];
+        CGSize contentSize = [content sizeWithAttributes:@{NSFontAttributeName: font}];
 
         windowWidth = contentSize.width + 40;
         windowHeight = contentSize.height;
@@ -119,7 +119,6 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
 
         if (@available(iOS 11.0, *)) {
             UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
-            CGFloat topPadding = window.safeAreaInsets.top;
             CGFloat bottomPadding = window.safeAreaInsets.bottom;
 
             windowLeftTopCornerY = bottomPadding + windowLeftTopCornerY;
@@ -141,15 +140,8 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
         UILabel *contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(windowWidth/2 - contentSize.width/2, 0, contentSize.width, contentSize.height)];
         contentLabel.font = font;
         contentLabel.text = content;
-        contentLabel.numberOfLines = 1;
-        contentLabel.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
-        contentLabel.adjustsFontSizeToFitWidth = YES;
-        contentLabel.adjustsLetterSpacingToFitWidth = YES;
-        contentLabel.minimumScaleFactor = 10.0f/12.0f;
-        contentLabel.clipsToBounds = YES;
         contentLabel.backgroundColor = [UIColor clearColor];
         contentLabel.textColor = fontColorDict[[@(type) stringValue]];
-        contentLabel.textAlignment = NSTextAlignmentLeft;
         [_window addSubview:contentLabel];
 
         _window.hidden = NO;
