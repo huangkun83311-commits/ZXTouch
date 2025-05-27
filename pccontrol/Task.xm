@@ -163,16 +163,21 @@ void processTask(UInt8 *buff, CFWriteStreamRef writeStreamRef)
     }
     else if (taskType == TASK_PLAY_SCRIPT)
     {
-        @autoreleasepool {
-            NSError *err = nil;
-            playScript((UInt8*)eventData, &err);
-            if (err)
-            {
-                notifyClient((UInt8*)[[err localizedDescription] UTF8String], writeStreamRef);
-            }
-            else
-            {
-                notifyClient((UInt8*)"0\r\n", writeStreamRef);
+        if (isRecordingStart()) {
+            // 防止嵌套播放，录制时，不能播放脚本
+            showAlertBox(@"温馨提示", @"录制时不能播放脚本", 3);
+        } else {
+            @autoreleasepool {
+                NSError *err = nil;
+                playScript((UInt8*)eventData, &err);
+                if (err)
+                {
+                    notifyClient((UInt8*)[[err localizedDescription] UTF8String], writeStreamRef);
+                }
+                else
+                {
+                    notifyClient((UInt8*)"0\r\n", writeStreamRef);
+                }
             }
         }
     }
