@@ -18,6 +18,7 @@
 
 @interface ScriptListViewController ()
 @property (weak, nonatomic) UILabel *footer;
+@property (strong, nonatomic) NSString *ip;
 @end
 
 @implementation ScriptListViewController
@@ -197,7 +198,9 @@
             NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.footer.text = dict[@"ip"];
+                NSString *ip = dict[@"ip"];
+                self.ip = ip;
+                self.footer.text = ip;
             });
         }
     }];
@@ -222,6 +225,10 @@
 }
 
 - (void)refreshTable {
+    if (!_ip) {
+        [self getWANIPAddress];
+    }
+    
     scriptList = [self updateScriptList];
     [_scriptListTableView reloadData];
     
@@ -344,15 +351,5 @@
         [self presentViewController:alert animated:YES completion:nil];
     }
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
