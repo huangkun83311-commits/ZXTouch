@@ -89,27 +89,9 @@
     
     UILabel *footer = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 50)];
     footer.textAlignment = NSTextAlignmentCenter;
+    footer.text = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
     _tableView.tableFooterView = footer;
     _footer = footer;
-    
-    [self getWANIPAddress];
-}
-
-- (void)getWANIPAddress {
-    NSURL *url = [NSURL URLWithString:@"https://ipinfo.io/json"];
-    NSURLSessionConfiguration *cfg = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:cfg];
-    NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (data) {
-            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.footer.text = dict[@"ip"];
-            });
-        }
-    }];
-    
-    [task resume];
 }
 
 - (void)handleSwitchAppBeforePlaying:(UISwitch*)s {

@@ -17,7 +17,7 @@
 #import "Util.h"
 
 @interface ScriptListViewController ()
-
+@property (weak, nonatomic) UILabel *footer;
 @end
 
 @implementation ScriptListViewController
@@ -173,18 +173,41 @@
     
     refreshControl = [[UIRefreshControl alloc]init];
     [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
-    self._scriptListTableView.refreshControl = refreshControl;
+    self.scriptListTableView.refreshControl = refreshControl;
     
     if (![currentFolder isEqualToString:SCRIPTS_PATH])
     {
         self.navigationItem.leftBarButtonItems = nil;
     }
+    
+    UILabel *footer = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 50)];
+    footer.textAlignment = NSTextAlignmentCenter;
+    _scriptListTableView.tableFooterView = footer;
+    _footer = footer;
+    
+    [self getWANIPAddress];
 }
 
+- (void)getWANIPAddress {
+    NSURL *url = [NSURL URLWithString:@"https://ipinfo.io/json"];
+    NSURLSessionConfiguration *cfg = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:cfg];
+    NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (data) {
+            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.footer.text = dict[@"ip"];
+            });
+        }
+    }];
+    
+    [task resume];
+}
 
 - (IBAction)moreButtonClicked:(id)sender {
-    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self._scriptListTableView];
-    NSIndexPath *indexPath = [self._scriptListTableView indexPathForRowAtPoint:buttonPosition];
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:_scriptListTableView];
+    NSIndexPath *indexPath = [_scriptListTableView indexPathForRowAtPoint:buttonPosition];
     
     MoreOptionsPopOverTableViewController *contentVC = [[MoreOptionsPopOverTableViewController alloc] initWithFolderPath:scriptList[indexPath.row]];
     
@@ -200,7 +223,7 @@
 
 - (void)refreshTable {
     scriptList = [self updateScriptList];
-    [__scriptListTableView reloadData];
+    [_scriptListTableView reloadData];
     
     [refreshControl endRefreshing];
 }
@@ -312,7 +335,7 @@
             // delete element in our script list array
             [self->scriptList removeObjectAtIndex:indexPath.row];
             // reload table view
-            [self._scriptListTableView reloadData];}];
+            [self.scriptListTableView reloadData];}];
         UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
            handler:nil];
         

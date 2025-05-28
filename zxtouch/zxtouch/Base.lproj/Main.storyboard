@@ -133,8 +133,8 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="_scriptListTableView" destination="4G3-3L-n8b" id="fRL-Cz-fLD"/>
                         <outlet property="logButton" destination="v4M-kr-sq3" id="0Nt-Bs-dkj"/>
+                        <outlet property="scriptListTableView" destination="4G3-3L-n8b" id="Q8V-H8-slU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PPn-uZ-st7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

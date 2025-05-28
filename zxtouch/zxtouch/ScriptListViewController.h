@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ScriptListViewController : UIViewController<UITableViewDelegate, UITableViewDataSource>
-@property (weak, nonatomic) IBOutlet UITableView *_scriptListTableView;
+@property (weak, nonatomic) IBOutlet UITableView *scriptListTableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *logButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *moreButton;
