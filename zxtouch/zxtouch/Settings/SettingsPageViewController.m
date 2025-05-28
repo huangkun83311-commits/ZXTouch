@@ -33,6 +33,8 @@
 {
     GCDWebServer* _webServer;
 }
+
+@property (weak, nonatomic) UILabel *footer;
 @end
 
 @implementation SettingsPageViewController
@@ -84,7 +86,30 @@
     [_tableView registerNib:entryCellNib forCellReuseIdentifier:@"EntryCell"];
     
     _tableView.backgroundColor = [UIColor colorWithRed:243/255.0f green:242/255.0f blue:248/255.0f alpha:1.0f];
-    _tableView.tableFooterView = [[UIView alloc] init];
+    
+    UILabel *footer = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 50)];
+    footer.textAlignment = NSTextAlignmentCenter;
+    _tableView.tableFooterView = footer;
+    _footer = footer;
+    
+    [self getWANIPAddress];
+}
+
+- (void)getWANIPAddress {
+    NSURL *url = [NSURL URLWithString:@"https://ipinfo.io/json"];
+    NSURLSessionConfiguration *cfg = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:cfg];
+    NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (data) {
+            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.footer.text = dict[@"ip"];
+            });
+        }
+    }];
+    
+    [task resume];
 }
 
 - (void)handleSwitchAppBeforePlaying:(UISwitch*)s {
@@ -254,34 +279,20 @@
     }
 }
 
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-
-}
-
-
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *resultView = [[UIView alloc] init];
-    //view.backgroundColor = [UIColor greenColor];
-    
-    UILabel *title = [[UILabel alloc] init];
-    title.translatesAutoresizingMaskIntoConstraints = NO;
-    title.font = [UIFont boldSystemFontOfSize:13];
-    title.textColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.7];
+    UITableViewHeaderFooterView *header = [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:@"settings.header"];
 
-    title.text = sections[section];
+    header.textLabel.text = sections[section];
 
-    
-    [resultView addSubview:title];
-    
-    [[title.leftAnchor constraintEqualToAnchor:resultView.leftAnchor constant:10] setActive:YES];
-    [[title.bottomAnchor constraintEqualToAnchor:resultView.bottomAnchor constant:-5] setActive:YES];
-
-    return resultView;
+    return header;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 60;
+    return 30;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 1;
 }
 /*
 #pragma mark - Navigation

@@ -147,7 +147,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="owK-Cn-gTP">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="owK-Cn-gTP">
                                 <rect key="frame" x="0.0" y="92" width="414" height="721"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
@@ -161,8 +161,8 @@
                         <constraints>
                             <constraint firstItem="owK-Cn-gTP" firstAttribute="bottom" secondItem="t8G-LP-iet" secondAttribute="bottom" id="CZu-Pb-SeQ"/>
                             <constraint firstItem="owK-Cn-gTP" firstAttribute="top" secondItem="t8G-LP-iet" secondAttribute="top" id="SiN-gC-IQa"/>
+                            <constraint firstItem="owK-Cn-gTP" firstAttribute="trailing" secondItem="t8G-LP-iet" secondAttribute="trailing" id="ZoV-Z2-5RO"/>
                             <constraint firstItem="owK-Cn-gTP" firstAttribute="leading" secondItem="t8G-LP-iet" secondAttribute="leading" id="c1i-Tj-aad"/>
-                            <constraint firstItem="owK-Cn-gTP" firstAttribute="centerX" secondItem="jdt-df-Nff" secondAttribute="centerX" id="weA-du-8tj"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Settings" id="IRD-wc-3dP"/>
