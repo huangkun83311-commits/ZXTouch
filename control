@@ -1,6 +1,6 @@
 Package: com.zjx.ioscontrol
 Name: ZXTouch
-Version: 0.0.8
+Version: 0.0.9
 Depends: python3, sudo, mobilesubstrate
 Architecture: iphoneos-arm
 Description: ZXTouch Main Application
