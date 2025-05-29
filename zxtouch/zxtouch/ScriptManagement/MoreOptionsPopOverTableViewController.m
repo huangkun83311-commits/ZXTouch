@@ -57,44 +57,36 @@
                                                                     message:@"Please enter the folder name"
                                                              preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Submit" style:UIAlertActionStyleDefault
+    UIAlertAction *submit = [UIAlertAction actionWithTitle:@"Submit"
+                                                     style:UIAlertActionStyleDefault
                                                    handler:^(UIAlertAction * action) {
-                                                       if (alert.textFields.count > 0) {
-                                                           UITextField *textField = [alert.textFields firstObject];
-                                                           if ([textField.text length] != 0)
-                                                           {
-
-                                                               // create folder
-                                                               BOOL isDir;
-                                                               NSError *err = nil;
-                                                               NSFileManager *fileManager= [NSFileManager defaultManager];
-                                                               NSString* extension = [self->currentFolder pathExtension];
-                                                               NSString* newFolderPath = [[self->currentFolder stringByDeletingLastPathComponent] stringByAppendingPathComponent:[textField.text stringByAppendingPathExtension:extension]];
-                                                               if([fileManager fileExistsAtPath:newFolderPath isDirectory:&isDir] && isDir)
-                                                               {
-                                                                   [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:NSLocalizedString(@"createFolderAlreadyExists", nil) buttonString:@"OK"];
-                                                               }
-                                                               else
-                                                               {
-                                                                   [fileManager createDirectoryAtPath:newFolderPath withIntermediateDirectories:YES attributes:nil error:&err];
-                                                                   if (err)
-                                                                   {
-                                                                       [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:[NSString stringWithFormat:@"%@%@", NSLocalizedString(@"createFolderFailed", nil), err] buttonString:@"OK"];
-                                                                   }
-                                                                   
-                                                                   [self moveFromFolder:self->currentFolder to:newFolderPath];
-                                                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                                                       [self->upperLevel refreshTable];
-                                                                   });
-                                                               }
-                                                               
-                                                           }
-                                                           else
-                                                           {
-                                                               [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:NSLocalizedString(@"createFolderEmptyName", nil) buttonString:@"OK"];
-                                                           }
-                                                       }
-                                                   }];
+        if (alert.textFields.count > 0) {
+            UITextField *textField = [alert.textFields firstObject];
+            if ([textField.text length] != 0) {
+                // create folder
+                BOOL isDir;
+                NSError *err = nil;
+                NSFileManager *fileManager= [NSFileManager defaultManager];
+                NSString* extension = [self->currentFolder pathExtension];
+                NSString* newFolderPath = [[self->currentFolder stringByDeletingLastPathComponent] stringByAppendingPathComponent:[textField.text stringByAppendingPathExtension:extension]];
+                if ([fileManager fileExistsAtPath:newFolderPath isDirectory:&isDir] && isDir) {
+                    [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:NSLocalizedString(@"createFolderAlreadyExists", nil) buttonString:@"OK"];
+                } else {
+                    [fileManager createDirectoryAtPath:newFolderPath withIntermediateDirectories:YES attributes:nil error:&err];
+                    if (err) {
+                        [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:[NSString stringWithFormat:@"%@%@", NSLocalizedString(@"createFolderFailed", nil), err] buttonString:@"OK"];
+                    }
+                    
+                    [self moveFromFolder:self->currentFolder to:newFolderPath];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self->upperLevel refreshTable];
+                    });
+                }
+            } else {
+                [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:NSLocalizedString(@"createFolderEmptyName", nil) buttonString:@"OK"];
+            }
+        }
+    }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
                                                    handler:^(UIAlertAction * action) {}];
 
