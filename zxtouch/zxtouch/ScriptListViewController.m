@@ -19,6 +19,7 @@
 @interface ScriptListViewController ()
 @property (weak, nonatomic) UILabel *footer;
 @property (strong, nonatomic) NSString *ip;
+@property (assign, nonatomic) BOOL isScriptRoot;
 @end
 
 @implementation ScriptListViewController
@@ -29,8 +30,9 @@
 }
 
 
-- (void) setFolder:(NSString*)folder {
-    currentFolder = [folder stringByStandardizingPath];
+- (void)setFolder:(NSString *)folder {
+    currentFolder = folder;
+    _isScriptRoot = [currentFolder isEqualToString:SCRIPTS_PATH];
 }
 
 - (UIModalPresentationStyle) adaptivePresentationStyleForPresentationController: (UIPresentationController * ) controller {
@@ -38,16 +40,12 @@
 }
 
 - (IBAction)logButtonClick:(id)sender {
-    
-
     LogViewController *logEditorViewController = [[LogViewController alloc] initWithNibName: @"LogViewController" bundle: nil];
     
     logEditorViewController.title = @"Log";
     //[logEditorViewController setFile:RUNTIME_OUTPUT_PATH];
 
     [self presentViewController:logEditorViewController animated:YES completion:nil];
-     
-
 }
 
 - (IBAction)addButtonClick:(id)sender {
@@ -65,9 +63,6 @@
 
 - (NSMutableArray*) updateScriptList {
     NSMutableArray *scriptList = [[NSMutableArray alloc] init];
-
-    if (!currentFolder)
-        currentFolder = SCRIPTS_PATH;
 
     [self insertFileListIntoArray:scriptList fromPath:currentFolder];
     
@@ -108,24 +103,20 @@
     return scriptList;
 }
 
-- (BOOL) insertFileListIntoArray:(NSMutableArray*)arr fromPath:(NSString*) path {
+- (BOOL)insertFileListIntoArray:(NSMutableArray *)arr fromPath:(NSString *)path {
     NSError *err = nil;
+    NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&err];
     
-    NSArray* files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&err];
-    
-    if (err)
-    {
+    if (err) {
         NSLog(@"Error happens while getting files list. Error info: %@", err);
         return NO;
     }
     
-    for (NSString *fileName in files)
-    {
-        if ([[fileName substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"."])
-        {
+    for (NSString *fileName in files) {
+        if ([fileName hasPrefix:@"."]) {
             continue;
         }
-        NSString *filePath = [NSString stringWithFormat:@"%@/%@", path, fileName];
+        NSString *filePath = [path stringByAppendingPathComponent:fileName];
         [arr addObject:filePath];
     }
     
@@ -169,15 +160,16 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
+    if (!currentFolder)
+        [self setFolder:SCRIPTS_PATH];
     
     scriptList = [self updateScriptList];
     
-    refreshControl = [[UIRefreshControl alloc]init];
+    refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
     self.scriptListTableView.refreshControl = refreshControl;
     
-    if (![currentFolder isEqualToString:SCRIPTS_PATH])
-    {
+    if (!_isScriptRoot) {
         self.navigationItem.leftBarButtonItems = nil;
     }
     
@@ -185,8 +177,9 @@
     footer.textAlignment = NSTextAlignmentCenter;
     _scriptListTableView.tableFooterView = footer;
     _footer = footer;
-    
-    [self getWANIPAddress];
+    if (_isScriptRoot && !_ip) {
+        [self getWANIPAddress];
+    }
 }
 
 - (void)getWANIPAddress {
@@ -225,7 +218,7 @@
 }
 
 - (void)refreshTable {
-    if (!_ip) {
+    if (_isScriptRoot && !_ip) {
         [self getWANIPAddress];
     }
     

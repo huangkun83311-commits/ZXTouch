@@ -10,7 +10,7 @@
 
 #import "jbroot.h"
 
-#define SCRIPTS_PATH JBROOT_PATH_OC("/var/mobile/Library/ZXTouch/scripts/")
+#define SCRIPTS_PATH JBROOT_PATH_OC("/var/mobile/Library/ZXTouch/scripts")
 #define RUNTIME_OUTPUT_PATH JBROOT_PATH_OC("/var/mobile/Library/ZXTouch/coreutils/ScriptRuntime/output")
 
 #define SPRINGBOARD_CONFIG_PATH JBROOT_PATH_OC("/var/mobile/Library/ZXTouch/config/tweak/config.plist")
