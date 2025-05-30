@@ -6,6 +6,7 @@
 #include "AlertBox.h"
 #include "Config.h"
 #include "Common.h"
+#import "Popup.h"
 
 static BOOL isPlaying = false;
 
@@ -132,6 +133,7 @@ static BOOL isPlaying = false;
     NSString *foregroundApp = scriptInfo[@"FrontApp"];
     // call different functions depending on file extension
 
+    BOOL isShown = [popupWindow isShown];
     // show indicator
     dispatch_async(dispatch_get_main_queue(), ^{
         _playIndicator = [[UIWindow alloc] initWithFrame:CGRectMake(0,0,10*2,10*2)];
@@ -161,6 +163,10 @@ static BOOL isPlaying = false;
                 }
             }
         }
+
+        if (isShown) {
+            [popupWindow hide];
+        } 
     });
 
     NSString *entryFilePath = [scriptBundlePath stringByAppendingPathComponent:entryFileName];
@@ -173,6 +179,11 @@ static BOOL isPlaying = false;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             NSError *err = nil;
             [self playFromRawFile:entryFilePath foregroundApp:foregroundApp err:&err];
+            if (isShown) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [popupWindow show];
+                });
+            }
         }); 
     }
     else if ([fileExtension isEqualToString:@"py"])
@@ -181,6 +192,11 @@ static BOOL isPlaying = false;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             NSError *err = nil;
             [self playFromPythonFile:entryFilePath foregroundApp:foregroundApp err:&err];
+            if (isShown) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [popupWindow show];
+                });
+            }
         });
         
     }

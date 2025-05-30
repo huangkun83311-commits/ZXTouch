@@ -10,4 +10,6 @@
 - (BOOL) isShown;
 @end
 
+extern PopupWindow *popupWindow;
+
 #endif
