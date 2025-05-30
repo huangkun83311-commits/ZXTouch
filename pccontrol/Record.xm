@@ -162,6 +162,16 @@ void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef servic
     }
     if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeDigitizer)
     {
+        int p_eventMask = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerEventMask);
+        /*
+        IOHIDFloat x = IOHIDEventGetFloatValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerX);
+        IOHIDFloat y = IOHIDEventGetFloatValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerY);
+        int range = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
+        int touch = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
+        int index = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
+        NSLog(@"### com.zjx.springboard: p event x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, p_eventMask, index, range, touch);
+        */
+
         NSArray *childrens = (__bridge NSArray *)IOHIDEventGetChildren(parentEvent);
 
         for (int i = 0; i < [childrens count]; i++)
@@ -173,30 +183,34 @@ void recordIOHIDEventCallback(void* target, void* refcon, IOHIDServiceRef servic
             //int range = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
             int touch = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
             int index = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
-            //NSLog(@"### com.zjx.springboard: x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
-            float sleepusecs = (CFAbsoluteTimeGetCurrent() - lastEventTimeStampForRecording)*1000000;
-            float xToWrite =  x*device_screen_width*10;
-            float yToWrite =  y*device_screen_height*10;
+            //NSLog(@"### com.zjx.springboard: c event x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
+            float sleepusecs = (CFAbsoluteTimeGetCurrent() - lastEventTimeStampForRecording) * 1000000;
+            // x和y是小数，保留7位有效数字
+            int xToWrite =  (int)(x * SIZE_FACTOR);
+            int yToWrite =  (int)(y * SIZE_FACTOR);
 
-            if ( touch == 1 && eventMask & 2 )
+            if ( touch == 1 && eventMask & kIOHIDDigitizerEventTouch /*2*/ )
             {
                 // touch down
-                //NSLog(@"com.zjx.springboard: Touch down. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x*device_screen_width, y*device_screen_height, index, eventMask, range, touch);
-                [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n1011%02d%05.0f%05.0f\n", sleepusecs, index, xToWrite, yToWrite] dataUsingEncoding:NSUTF8StringEncoding]];
+                //NSLog(@"### com.zjx.springboard: Touch down. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x * device_screen_width, y * device_screen_height, index, eventMask, range, touch);
+                NSString *attrs = [NSString stringWithFormat:@"18%.0f\n3011%02d%07d%07d%08d%08d\n", sleepusecs, index, xToWrite, yToWrite, p_eventMask, eventMask];
+                [scriptRecordingFileHandle writeData:[attrs dataUsingEncoding:NSUTF8StringEncoding]];
                 lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
             }
-            else if ( touch == 1 && eventMask & 4 )
+            else if ( touch == 1 && eventMask & kIOHIDDigitizerEventPosition /*4*/ )
             {
                 // touch move
-                //NSLog(@"com.zjx.springboard: touch moved to (%f, %f). index: %d. eventmask: %d, range: %d, touch: %d", x*device_screen_width, y*device_screen_height, index, eventMask, range, touch);
-                [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n1012%02d%05.0f%05.0f\n", sleepusecs, index, xToWrite, yToWrite] dataUsingEncoding:NSUTF8StringEncoding]];
+                //NSLog(@"### com.zjx.springboard: touch moved to (%f, %f). index: %d. eventmask: %d, range: %d, touch: %d", x * device_screen_width, y * device_screen_height, index, eventMask, range, touch);
+                NSString *attrs = [NSString stringWithFormat:@"18%.0f\n3012%02d%07d%07d%08d%08d\n", sleepusecs, index, xToWrite, yToWrite, p_eventMask, eventMask];
+                [scriptRecordingFileHandle writeData:[attrs dataUsingEncoding:NSUTF8StringEncoding]];
                 lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
             }
-            else if (!touch && (eventMask & 2) )
+            else if (!touch && (eventMask & kIOHIDDigitizerEventTouch /*2*/) )
             {
                 // touch up
-                //NSLog(@"com.zjx.springboard: Touch up. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x*device_screen_width, y*device_screen_height, index, eventMask, range, touch);
-                [scriptRecordingFileHandle writeData:[[NSString stringWithFormat:@"18%.0f\n1010%02d%05.0f%05.0f\n", sleepusecs, index, xToWrite, yToWrite] dataUsingEncoding:NSUTF8StringEncoding]];
+                //NSLog(@"### com.zjx.springboard: Touch up. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x * device_screen_width, y * device_screen_height, index, eventMask, range, touch);
+                NSString *attrs = [NSString stringWithFormat:@"18%.0f\n3010%02d%07d%07d%08d%08d\n", sleepusecs, index, xToWrite, yToWrite, p_eventMask, eventMask];
+                [scriptRecordingFileHandle writeData:[attrs dataUsingEncoding:NSUTF8StringEncoding]];
                 lastEventTimeStampForRecording = CFAbsoluteTimeGetCurrent();
             }
         }

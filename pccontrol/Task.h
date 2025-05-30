@@ -3,6 +3,7 @@
 
 #import <Foundation/Foundation.h>
 
+#define TASK_PERFORM_RAW_TOUCH 30
 #define TASK_PERFORM_TOUCH 10
 #define TASK_PROCESS_BRING_FOREGROUND 11
 #define TASK_SHOW_ALERT_BOX 12

@@ -14,14 +14,15 @@
 #define TOUCH_MOVE 2
 
 const int TOUCH_DATA_LEN = 13;
+extern CGFloat device_screen_width;
+extern CGFloat device_screen_height;
 
 int getTouchCountFromDataArray(UInt8* dataArray);
 int getTouchTypeFromDataArray(UInt8* dataArray, int index);
 int getTouchIndexFromDataArray(UInt8* dataArray, int index);
 float getTouchXFromDataArray(UInt8* dataArray, int index);
 float getTouchYFromDataArray(UInt8* dataArray, int index);
-void performTouchFromRawData(UInt8 *eventData);
-void performKeyboardEventFromRawData(UInt8 *eventData);
+void performTouchFromData(UInt8 *eventData);
 
 IOHIDEventRef generateChildEventTouchDown(int index, float x, float y);
 IOHIDEventRef generateChildEventTouchMove(int index, float x, float y);
@@ -33,5 +34,16 @@ void startSetSenderIDCallBack();
 void initSenderId();
 
 void initTouchGetScreenSize();
+
+int getTouchCountFromRawDataArray(UInt8* dataArray);
+int getTouchTypeFromRawDataArray(UInt8* dataArray, int index);
+int getTouchIndexFromRawDataArray(UInt8* dataArray, int index);
+int getTouchXFromRawDataArray(UInt8* dataArray, int index);
+int getTouchYFromRawDataArray(UInt8* dataArray, int index);
+void performTouchFromRawData(UInt8 *eventData);
+void performKeyboardEventFromRawData(UInt8 *eventData);
+IOHIDEventRef generateChildEventTouchDownWith(int index, float x, float y);
+IOHIDEventRef generateChildEventTouchMoveWith(int index, float x, float y);
+IOHIDEventRef generateChildEventTouchUpWith(int index, float x, float y);
 
 #endif

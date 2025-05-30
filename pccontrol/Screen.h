@@ -4,6 +4,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#define SIZE_FACTOR 10000000.0
+
 @interface Screen :NSObject
 {
     

@@ -1,5 +1,15 @@
 # IOS13-SimulateTouch V0.0.8
 
+新增特性：
+
+- 支持录制Home按钮事件
+
+- 支持录制屏幕边缘滑动事件，如左滑返回、通知中心、控制中心、刘海屏的**Dynamic Island**
+
+- 获取并显示手机外网ip
+
+  
+
 原来的`python3.7`找不到`libpython`，修改`LC_LOAD_DYLIB`路径后，找不到`bind_stub_helper`
 
 解决方案：

@@ -43,11 +43,16 @@ void processTask(UInt8 *buff, CFWriteStreamRef writeStreamRef)
     UInt8 *eventData = buff + 0x2;
     int taskType = getTaskType(buff);
 
-    //for touching
-    if (taskType == TASK_PERFORM_TOUCH)
+    if (taskType == TASK_PERFORM_RAW_TOUCH) //for raw touching
     {
         @autoreleasepool{
             performTouchFromRawData(eventData);
+        }
+    }
+    if (taskType == TASK_PERFORM_TOUCH) //for touching
+    {
+        @autoreleasepool{
+            performTouchFromData(eventData);
         }
     }
     else if (taskType == TASK_PERFORM_KEYBOARD_EVNET)

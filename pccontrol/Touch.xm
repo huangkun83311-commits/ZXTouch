@@ -3,6 +3,7 @@
 #include "Screen.h"
 #include "AlertBox.h"
 #include "Task.h"
+#import "headers/IOHIDUsageTables.h"
 
 #define TOUCH_SENDER_ID_PLIST_FILE_NAME @"senderid.plist"
 
@@ -18,8 +19,8 @@
 #define EVENT_Y_INDEX 3
 
 // device screen size
-static CGFloat device_screen_width = 0;
-static CGFloat device_screen_height = 0;
+CGFloat device_screen_width = 0;
+CGFloat device_screen_height = 0;
 
 IOHIDEventSystemClientRef ioHIDEventSystemForSenderID = NULL;
 
@@ -37,15 +38,6 @@ int getTouchCountFromDataArray(UInt8* dataArray)
 {
 	int count = (dataArray[0] - '0');
 	return count;
-}
-
-/*
-get count from data array by socket
-*/
-int getKeyboardIsDownFromDataArray(UInt8* dataArray)
-{
-    int isDown = (dataArray[1] - '0');
-    return isDown;
 }
 
 /*
@@ -164,7 +156,7 @@ static void appendChildEvent(IOHIDEventRef parent, int type, int index, float x,
 /**
 Perform touch events with data received from socket
 */
-void performTouchFromRawData(UInt8 *eventData)
+void performTouchFromData(UInt8 *eventData)
 {
     // generate a parent event
 	IOHIDEventRef parent = IOHIDEventCreateDigitizerEvent(kCFAllocatorDefault, mach_absolute_time(), 3, 99, 1, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0); 
@@ -224,32 +216,86 @@ void performTouchFromRawData(UInt8 *eventData)
     CFRelease(parent);
 }
 
-/**
-Perform keyboard events with data received from socket
-*/
-void performKeyboardEventFromRawData(UInt8 *eventData) {
-    // 创建Home键事件, isDown为true是按下，否则为抬起
-    bool isDown = getKeyboardIsDownFromDataArray(eventData);
-    NSLog(@"### com.zjx.springboard: Home button %d", isDown);
-    IOHIDEventRef homeButtonEvent = IOHIDEventCreateKeyboardEvent(
-        kCFAllocatorDefault,
-        mach_absolute_time(),
-        0x0C, // Usage Page: Consumer
-        0x40, // Usage: Menu/Home
-        isDown,
-        0
-    );
+void printIOHIDEvent(IOHIDEventRef parentEvent) 
+{
+    //NSLog(@"### com.zjx.springboard: post event : %d", IOHIDEventGetType(parentEvent));
+    if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeDigitizer)
+    {
+        IOHIDFloat x = IOHIDEventGetFloatValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerX);
+        IOHIDFloat y = IOHIDEventGetFloatValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerY);
+        int eventMask = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerEventMask);
+        int range = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
+        int touch = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
+        int index = IOHIDEventGetIntegerValue(parentEvent, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
+        NSLog(@"### com.zjx.springboard: p event x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
 
-    postIOHIDEvent(homeButtonEvent);
-    CFRelease(homeButtonEvent);
+        NSArray *childrens = (__bridge NSArray *)IOHIDEventGetChildren(parentEvent);
+
+        for (int i = 0; i < [childrens count]; i++)
+        {
+            IOHIDEventRef event = (__bridge IOHIDEventRef)childrens[i];
+            IOHIDFloat x = IOHIDEventGetFloatValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerX);
+            IOHIDFloat y = IOHIDEventGetFloatValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerY);
+            int eventMask = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerEventMask);
+            int range = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerRange);
+            int touch = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerTouch);
+            int index = IOHIDEventGetIntegerValue(event, (IOHIDEventField)kIOHIDEventFieldDigitizerIndex);
+            NSLog(@"### com.zjx.springboard: c event x %f : y %f. eventMask: %d. index: %d, range: %d. Touch: %d", x, y, eventMask, index, range, touch);
+
+            if ( touch == 1 && eventMask & kIOHIDDigitizerEventTouch /*2*/ )
+            {
+                // touch down
+                NSLog(@"### com.zjx.springboard: Touch down. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x * device_screen_width, y * device_screen_height, index, eventMask, range, touch);
+            }
+            else if ( touch == 1 && eventMask & kIOHIDDigitizerEventPosition /*4*/ )
+            {
+                // touch move
+                NSLog(@"### com.zjx.springboard: touch moved to (%f, %f). index: %d. eventmask: %d, range: %d, touch: %d", x * device_screen_width, y * device_screen_height, index, eventMask, range, touch);
+            }
+            else if (!touch && (eventMask & kIOHIDDigitizerEventTouch /*2*/) )
+            {
+                // touch up
+                NSLog(@"### com.zjx.springboard: Touch up. x %f : y %f. index: %d.  eventmask: %d, range: %d, touch: %d", x * device_screen_width, y * device_screen_height, index, eventMask, range, touch);
+            }
+        }
+        /*
+        if (senderID == 0)
+            senderID = IOHIDEventGetSenderID(event);
+        */
+    }
+    else if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeButton)
+    {
+        NSLog(@"### com.zjx.springboard: type: button, senderID: %llX", IOHIDEventGetSenderID(parentEvent));
+    }
+    else if (IOHIDEventGetType(parentEvent) == kIOHIDEventTypeKeyboard) // 1. 获取事件类型
+    {
+        // 2. 获取Usage Page
+        uint32_t usagePage = IOHIDEventGetIntegerValue(parentEvent, kIOHIDEventFieldKeyboardUsagePage);
+        // 3. 检查是否是消费类设备页
+        if (usagePage == kHIDPage_Consumer) {
+            // 4. 获取Usage ID
+            uint32_t usage = IOHIDEventGetIntegerValue(parentEvent, kIOHIDEventFieldKeyboardUsage);
+            // 5. 检查是否是Home键 (Menu)
+            if (usage == kHIDUsage_Csmr_Menu) {
+                // 6. 判断是按下还是松开
+                bool isDown = IOHIDEventGetIntegerValue(parentEvent, kIOHIDEventFieldKeyboardDown);
+                
+                if (isDown) {
+                    //NSLog(@"Home button was pressed!");
+                } else {
+                    NSLog(@"Home button was released!");
+                }
+            }
+        }
+    }
 }
-
 
 /**
 Post the parent event
 */
 void postIOHIDEvent(IOHIDEventRef event)
 {
+    //printIOHIDEvent(event);
     static IOHIDEventSystemClientRef ioSystemClient = NULL;
     if (!ioSystemClient){
         ioSystemClient = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
