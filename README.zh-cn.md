@@ -1,6 +1,6 @@
-# IOS13-SimulateTouch V0.0.6
+# ZXTouch V0.1.0
 
-一个**系统级**的模拟触摸库，适用于iOS 11.0 - 14
+一个**系统级**的模拟触摸库，适用于iOS 11.0 - 16
 
 需要先对iOS设备进行越狱。应用程序级触摸模拟库[PTFakeTouch](https://github.com/Ret70/PTFakeTouch)。可根据你的需要选择。
 
