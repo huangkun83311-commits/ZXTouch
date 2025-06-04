@@ -75,10 +75,11 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
             _window.hidden = YES;
             _window = nil;
         }
-        CGFloat screenWidth = [Screen getScreenWidth];
-        CGFloat screenHeight = [Screen getScreenHeight];
 
         CGFloat scale = [Screen getScale];
+        // 尺寸是乘了scale的，先还原
+        CGFloat screenWidth = [Screen getScreenWidth] / scale;
+        CGFloat screenHeight = [Screen getScreenHeight] / scale;
         
         int fontSize = 15;
         if (afontSize != 0)
@@ -98,14 +99,17 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
             }
         }
 
-        UIFont * font = [UIFont systemFontOfSize:fontSize weight:UIFontWeightLight];
-        CGSize contentSize = [content sizeWithAttributes:@{NSFontAttributeName: font}];
+        UIFont * font = [UIFont systemFontOfSize:fontSize];
+        // window边距 2 * 10，label边距 2 * 10
+        CGSize contentSize = [self calculateTextSizeWithText:content font:font maxWidth:screenWidth - 40];
 
-        windowWidth = contentSize.width + 40;
-        windowHeight = contentSize.height;
-        //windowHeight = (int)((screenHeight/scale)/4);
+        CGFloat width = contentSize.width;
+        CGFloat height = contentSize.height;
+        //NSLog(@"### com.zjx.springboard: screenWidth %f width: %f height %f", screenWidth, width, height);
+        windowWidth = width + 20;
+        windowHeight = height + 8;
 
-        int windowLeftTopCornerX = (int)((screenWidth/scale)/2 - windowWidth/2);
+        int windowLeftTopCornerX = (int)((screenWidth - windowWidth) / 2);
         int windowLeftTopCornerY = 30;
 
         if (position == 0)
@@ -114,7 +118,7 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
         }
         else if (position == 1)
         {
-            windowLeftTopCornerY = (int)((screenHeight - contentSize.height - 50)/scale);
+            windowLeftTopCornerY = (int)(screenHeight - height - 50);
         }
 
         if (@available(iOS 11.0, *)) {
@@ -124,23 +128,17 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
             windowLeftTopCornerY = bottomPadding + windowLeftTopCornerY;
         }
 
-
-
-        
         _window = [[UIWindow alloc] initWithFrame:CGRectMake(windowLeftTopCornerX, windowLeftTopCornerY, windowWidth, windowHeight)];
         currentWindow = _window;
         _window.windowLevel = UIWindowLevelStatusBar;
         [_window setBackgroundColor: backgroundColorDict[[@(type) stringValue]]];
-
-        _window.layer.borderColor = [UIColor clearColor].CGColor;
-        _window.layer.borderWidth = 2.0f;
         _window.layer.cornerRadius = 10;
         [_window setUserInteractionEnabled:NO];
 
-        UILabel *contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(windowWidth/2 - contentSize.width/2, 0, contentSize.width, contentSize.height)];
+        UILabel *contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 4, width, height)];
+        contentLabel.numberOfLines = 0;
         contentLabel.font = font;
         contentLabel.text = content;
-        contentLabel.backgroundColor = [UIColor clearColor];
         contentLabel.textColor = fontColorDict[[@(type) stringValue]];
         [_window addSubview:contentLabel];
 
@@ -162,18 +160,14 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
         }
 
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [NSThread sleepForTimeInterval:duration];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (currentWindow != _window)
-            {
-                return;
-            }
-            _window.hidden = YES;
-            _window = nil;
-        });
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (currentWindow != _window) {
+            return;
+        }
+        _window.hidden = YES;
+        _window = nil;
     });
-    
 }
 
 - (void) show {
@@ -193,9 +187,20 @@ void showToastFromRawData(UInt8 *eventData, NSError **error)
     duration = d;
 }
 
-
-
-
-
++ (CGSize)calculateTextSizeWithText:(NSString *)text 
+                               font:(UIFont *)font 
+                           maxWidth:(CGFloat)maxWidth {
+    
+    CGSize constraintSize = CGSizeMake(maxWidth, CGFLOAT_MAX);
+    NSDictionary *attributes = @{NSFontAttributeName: font};
+    
+    CGRect boundingRect = [text boundingRectWithSize:constraintSize
+                                             options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                          attributes:attributes
+                                             context:nil];
+    
+    // 使用ceil对尺寸进行向上取整
+    return CGSizeMake(ceil(boundingRect.size.width), ceil(boundingRect.size.height));
+}
 
 @end
