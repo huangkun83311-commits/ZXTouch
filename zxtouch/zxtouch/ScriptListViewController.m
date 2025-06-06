@@ -173,6 +173,11 @@
         self.navigationItem.leftBarButtonItems = nil;
     }
     
+    NSArray *builtin = @[@"Debug", @"examples", @"recording"];
+    if ([builtin containsObject:self.navigationItem.title]) {
+        self.navigationItem.rightBarButtonItems = nil;
+    }
+    
     UILabel *footer = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 50)];
     footer.textAlignment = NSTextAlignmentCenter;
     _scriptListTableView.tableFooterView = footer;
