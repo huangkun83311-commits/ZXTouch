@@ -155,7 +155,7 @@ static BOOL isPlaying = false;
                 
                 if ([windowScene activationState] == 0) {
                     [_playIndicator performSelector:@selector(setWindowScene:) withObject:windowScene];
-                    continue;
+                    break;
                 }
                 if ([windowScene activationState] == 1) {
                     [_playIndicator performSelector:@selector(setWindowScene:) withObject:windowScene];

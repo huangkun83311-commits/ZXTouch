@@ -157,7 +157,7 @@ static int windowHeight = 150;
                 
                 if ([windowScene activationState] == 0) {
                     [_window performSelector:@selector(setWindowScene:) withObject:windowScene];
-                    continue;
+                    break;
                 }
                 if ([windowScene activationState] == 1) {
                     [_window performSelector:@selector(setWindowScene:) withObject:windowScene];

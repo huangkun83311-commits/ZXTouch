@@ -274,6 +274,7 @@ int executeCommand(NSString *command) {
         if (error) {
             NSLog(@"com.zjx.springboard: launch error %@", error);
         }
+        [task waitUntilExit];
     }
     
     return 0;
