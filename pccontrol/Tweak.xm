@@ -277,7 +277,7 @@ Boolean init()
 }
 
 void init_zxtouch(void) {
-
+    /*
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         Boolean isExpired = false;
 
@@ -313,6 +313,8 @@ void init_zxtouch(void) {
 
 
     });
+    */
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CGFloat screen_scale = [[UIScreen mainScreen] scale];
 
