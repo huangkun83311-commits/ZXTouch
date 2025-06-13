@@ -145,23 +145,6 @@ NSArray *builtin = nil;
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"ZXTouchAlreadyLaunchedv0.0.6"])
-    {
-        
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"newFeatures", nil)
-                                                                       message:NSLocalizedString(@"006features", nil)
-                                       preferredStyle:UIAlertControllerStyleAlert];
-         
-        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-           handler:^(UIAlertAction * action) {}];
-         
-        [alert addAction:defaultAction];
-        [self presentViewController:alert animated:YES completion:nil];
-        
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"ZXTouchAlreadyLaunchedv0.0.6"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
-    
     if (!currentFolder)
         [self setFolder:SCRIPTS_PATH];
     
