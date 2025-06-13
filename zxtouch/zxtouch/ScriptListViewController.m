@@ -176,7 +176,7 @@ NSArray *builtin = nil;
     }
     
     builtin = @[@"Debug", @"examples", @"recording"];
-    if ([builtin containsObject:self.navigationItem.title]) {
+    if ([builtin containsObject:self.navigationItem.title] || [currentFolder.pathExtension isEqualToString:@"bdl"]) {
         self.navigationItem.rightBarButtonItems = nil;
     }
     

@@ -19,11 +19,28 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
-    NSString* content = [NSString stringWithContentsOfFile:currentFilePath
-                                                  encoding:NSUTF8StringEncoding
-                                                     error:NULL];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:currentFilePath options:kNilOptions error:&error];
+    NSString *content = nil;
+    if (error) {
+        content = error.description;
+    } else if (data) {
+        content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        if (!content && [currentFilePath.pathExtension isEqualToString:@"plist"]) { // bplist
+            id obj = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:nil error:&error];
+            if (error) {
+                content = error.description;
+            } else {
+                NSData *newData = [NSPropertyListSerialization dataWithPropertyList:obj format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+                if (error) {
+                    content = [obj description];
+                } else {
+                    content = [[NSString alloc] initWithData:newData encoding:NSUTF8StringEncoding];
+                }
+            }
+        }
+    }
     _textInput.text = content;
     isSaveButtonShown = NO;
 }
