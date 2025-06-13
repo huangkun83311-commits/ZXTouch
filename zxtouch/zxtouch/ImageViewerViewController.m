@@ -16,27 +16,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    if (_path)
-    {
+    
+    if (_path) {
         UIImage *image = [UIImage imageWithContentsOfFile:_path];
-        _imageView.image=image;
-    }
-    else
-    {
+        _imageView.image = image;
+        
+        CGSize imageSize = image.size;
+        CGSize viewSize = _imageView.bounds.size;
+        
+        if (imageSize.width <= viewSize.width &&
+            imageSize.height <= viewSize.height) {
+            _imageView.contentMode = UIViewContentModeCenter;
+        } else {
+            _imageView.contentMode = UIViewContentModeScaleAspectFit;
+        }
+    } else {
         [Util showAlertBoxWithOneOption:self title:NSLocalizedString(@"error", nil) message:NSLocalizedString(@"anErrorHappened", nil) buttonString:@"OK"];
     }
 }
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

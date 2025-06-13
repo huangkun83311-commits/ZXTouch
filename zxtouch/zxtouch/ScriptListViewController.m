@@ -289,12 +289,8 @@ NSArray *builtin = nil;
     NSString *path = scriptList[indexPath.row];
     [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
     
-    
-    if (isDir)
-    {
+    if (isDir) {
         ScriptListViewController *scriptBundleContentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"scriptBundleContent"];
-        
-        
         
         [scriptBundleContentViewController setFolder:path];
         scriptBundleContentViewController.title = [path lastPathComponent];
@@ -303,31 +299,23 @@ NSArray *builtin = nil;
         return;
     }
     
-    NSArray *possibleImageExtension = @[@"jpg", @"png", @"JPG", @"PNG", @"jpeg", @"JPEG", @"GIF", @"gif"];
-
-    BOOL isImage = false;
-    for (NSString* i in possibleImageExtension)
-    {
-        if ([[path pathExtension] isEqualToString:i])
-        {
-            isImage = true;
-        }
-    }
+    NSArray *imageExts = @[@"jpg", @"png", @"JPG", @"PNG", @"jpeg", @"JPEG", @"GIF", @"gif"];
+    NSString *ext = [path pathExtension];
+    BOOL isImage = [imageExts containsObject:ext];
     
-    if (isImage)
-    {
+    if (isImage) {
         ImageViewerViewController *imageViewerController = [self.storyboard instantiateViewControllerWithIdentifier:@"imageViewer"];
         
         imageViewerController.title = [path lastPathComponent];
         imageViewerController.path = path;
+        
         [self.navigationController pushViewController:imageViewerController animated:YES];
-    }
-    else
-    {
+    } else {
         ScriptEditorViewController *scriptEditorViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"fileContentEditor"];
         
         scriptEditorViewController.title = [path lastPathComponent];
         [scriptEditorViewController setFile:path];
+        
         [self.navigationController pushViewController:scriptEditorViewController animated:YES];
     }
 }
