@@ -1,4 +1,4 @@
-# ZXTouch V0.1.0
+# ZXTouch V0.1.1
 
 Forked from [mnihyc/ZXTouch](https://github.com/mnihyc/ZXTouch)
 
