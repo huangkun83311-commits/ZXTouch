@@ -79,7 +79,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                                     <state key="normal" backgroundImage="gearshape"/>
                                                     <connections>
-                                                        <action selector="moreButtonClicked:" destination="8jf-LX-yKd" eventType="touchUpInside" id="g8B-zD-85T"/>
+                                                        <action selector="moreButtonClicked:" destination="tDu-2v-8S6" eventType="touchUpInside" id="NrK-fc-Kaj"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -98,8 +98,9 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="iconImage" destination="hy9-o5-QSp" id="uBk-kT-eEI"/>
+                                            <outlet property="moreButton" destination="GKz-sp-7qO" id="PRf-bh-KOf"/>
                                             <outlet property="playButton" destination="8uv-BC-Bsb" id="iCk-f4-1Ml"/>
-                                            <outlet property="scriptTitle" destination="MXX-sD-5Vi" id="pEb-zg-thR"/>
+                                            <outlet property="titleLabel" destination="MXX-sD-5Vi" id="DXP-iS-djS"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

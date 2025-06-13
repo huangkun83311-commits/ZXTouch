@@ -16,7 +16,7 @@
 #import "Socket.h"
 #import "Util.h"
 
-@interface ScriptListViewController ()
+@interface ScriptListViewController () <ScriptListTableCellDelegate>
 @property (weak, nonatomic) UILabel *footer;
 @property (strong, nonatomic) NSString *ip;
 @property (assign, nonatomic) BOOL isScriptRoot;
@@ -206,9 +206,38 @@
     [task resume];
 }
 
-- (IBAction)moreButtonClicked:(id)sender {
-    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:_scriptListTableView];
-    NSIndexPath *indexPath = [_scriptListTableView indexPathForRowAtPoint:buttonPosition];
+- (void)cell:(ScriptListTableCell *)cell performActionWith:(id )sender index:(NSInteger)index {
+    if (index == 0) {
+        [self playScriptWithCell:cell];
+    } else if (index == 1) {
+        [self showMoreWithCell:cell sender:sender];
+    }
+}
+
+- (void)playScriptWithCell:(ScriptListTableCell *)cell {
+    NSIndexPath *indexPath = [_scriptListTableView indexPathForCell:cell];
+    NSString *path = scriptList[indexPath.row];
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        Socket *springBoardSocket = [[Socket alloc] init];
+        int ret = [springBoardSocket connect:@"127.0.0.1" byPort:6000];
+        if (ret != 0) {
+            return;
+        }
+        
+        [springBoardSocket send:[NSString stringWithFormat:@"19%@", path]];
+        NSString *result = [springBoardSocket recv:1024];
+        if (result.length == 0 || [result characterAtIndex:0] != '0') {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [Util showAlertBoxWithOneOption:self title:@"Error" message:[NSString stringWithFormat:@"Cannot play script. Error: %@", result] buttonString:@"OK"];
+            });
+        }
+        [springBoardSocket close];
+    });
+}
+
+- (void)showMoreWithCell:(ScriptListTableCell *)cell sender:(id)sender {
+    NSIndexPath *indexPath = [_scriptListTableView indexPathForCell:cell];
     
     MoreOptionsPopOverTableViewController *contentVC = [[MoreOptionsPopOverTableViewController alloc] initWithFolderPath:scriptList[indexPath.row]];
     
@@ -254,8 +283,8 @@
         //没有,创建一个
         cell = [[ScriptListTableCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
-    cell.parentViewController = self;
-    [cell setPropertyWithPath:scriptList[indexPath.row]];
+    cell.delegate = self;
+    cell.path = scriptList[indexPath.row];
     return cell;
 }
 

@@ -9,14 +9,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ScriptListTableCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UILabel *scriptTitle;
-@property (weak, nonatomic) IBOutlet UIButton *playButton;
-@property (strong, nonatomic) IBOutlet UIImageView *iconImage;
-@property (weak, nonatomic) UIViewController* parentViewController;
+@class ScriptListTableCell;
+@protocol ScriptListTableCellDelegate <NSObject>
 
-- (void) setTitle:(NSString*)title;
-- (void) setPropertyWithPath:(NSString*)path;
+- (void)cell:(ScriptListTableCell *)cell performActionWith:(UIButton *)button index:(NSInteger)index;
+
+@end
+
+@interface ScriptListTableCell : UITableViewCell
+
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UIButton *moreButton;
+@property (strong, nonatomic) IBOutlet UIImageView *iconImage;
+@property (weak, nonatomic) id<ScriptListTableCellDelegate> delegate;
+@property (strong, nonatomic) NSString *path;
 
 @end
 

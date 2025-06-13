@@ -9,47 +9,18 @@
 #import "Socket.h"
 #import "Util.h"
 
-BOOL connected = NO;
-
 @implementation ScriptListTableCell
-{
-    NSString* filePath;
-}
-
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // Initialization code
-}
 
 - (IBAction)playButtonClick:(id)sender {
-    connected = YES;
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        Socket *springBoardSocket = [[Socket alloc] init];
-        int ret = [springBoardSocket connect:@"127.0.0.1" byPort:6000];
-        if (ret != 0) {
-            return;
-        }
-        
-        [springBoardSocket send:[NSString stringWithFormat:@"19%@", self->filePath]];
-        NSString *result = [springBoardSocket recv:1024];
-        if (result.length == 0 || [result characterAtIndex:0] != '0') {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [Util showAlertBoxWithOneOption:self->_parentViewController title:@"Error" message:[NSString stringWithFormat:@"Cannot play script. Error: %@", result] buttonString:@"OK"];
-            });
-        }
-        [springBoardSocket close];
-        connected = NO;
-    });
+    [self.delegate cell:self performActionWith:sender index:0];
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (IBAction)moreButtonClicked:(id)sender {
+    [self.delegate cell:self performActionWith:sender index:1];
 }
 
-- (void) setTitle:(NSString*)title{
-    _scriptTitle.text = title;
+- (void)setTitle:(NSString*)title{
+    _titleLabel.text = title;
 }
 
 - (void) hideButton{
@@ -60,17 +31,16 @@ BOOL connected = NO;
     [_playButton setHidden:NO];
 }
 
-- (void) setPropertyWithPath:(NSString*)path{
-    filePath = path;
+- (void)setPath:(NSString *)path {
+    _path = path;
     
     BOOL isDir = NO;
-    _scriptTitle.text = [path lastPathComponent];
-    [self showButton];
-
-    if ([[path pathExtension] isEqualToString:@"bdl"]) // is script. can play
-    {
-        // Now the image will have been loaded and decoded and is ready to rock for the main thread
-        [_iconImage setImage:[UIImage imageNamed:@"script-icon"]];
+    self.title = [path lastPathComponent];
+    
+    // is script. can play
+    if ([[path pathExtension] isEqualToString:@"bdl"]) {
+        [self showButton];
+        _iconImage.image = [UIImage imageNamed:@"script-icon"];
         
         return;
     }
