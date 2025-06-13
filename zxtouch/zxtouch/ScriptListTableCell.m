@@ -31,6 +31,11 @@
     [_playButton setHidden:NO];
 }
 
+- (void)setShowMore:(BOOL)showMore {
+    _showMore = showMore;
+    _moreButton.hidden = !showMore;
+}
+
 - (void)setPath:(NSString *)path {
     _path = path;
     

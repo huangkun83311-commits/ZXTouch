@@ -16,6 +16,8 @@
 #import "Socket.h"
 #import "Util.h"
 
+NSArray *builtin = nil;
+
 @interface ScriptListViewController () <ScriptListTableCellDelegate>
 @property (weak, nonatomic) UILabel *footer;
 @property (strong, nonatomic) NSString *ip;
@@ -173,7 +175,7 @@
         self.navigationItem.leftBarButtonItems = nil;
     }
     
-    NSArray *builtin = @[@"Debug", @"examples", @"recording"];
+    builtin = @[@"Debug", @"examples", @"recording"];
     if ([builtin containsObject:self.navigationItem.title]) {
         self.navigationItem.rightBarButtonItems = nil;
     }
@@ -284,7 +286,17 @@
         cell = [[ScriptListTableCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
     }
     cell.delegate = self;
-    cell.path = scriptList[indexPath.row];
+    NSString *path = scriptList[indexPath.row];
+    cell.path = path;
+    NSString *name = path.lastPathComponent;
+    if ([builtin containsObject:name]) {
+        cell.showMore = NO;
+    } else {
+        BOOL isDir = NO;
+        [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+        cell.showMore = isDir || [[name pathExtension] isEqualToString:@"bdl"];
+    }
+    
     return cell;
 }
 

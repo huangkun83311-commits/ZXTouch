@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) IBOutlet UIImageView *iconImage;
 @property (weak, nonatomic) id<ScriptListTableCellDelegate> delegate;
 @property (strong, nonatomic) NSString *path;
+@property (assign, nonatomic) BOOL showMore;
 
 @end
 
