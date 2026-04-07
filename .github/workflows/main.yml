@@ -1,6 +1,7 @@
 name: "ZXTouch: build and upload"
 
 on:
+  workflow_dispatch: 
   push:
     tags:
       - 'v*'
